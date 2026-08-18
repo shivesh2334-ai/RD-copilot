@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+body {
+  @apply bg-paper text-paper-ink font-sans;
+}
+
+h1, h2, h3 {
+  @apply font-serif;
+}
+
+.card {
+  @apply bg-white border border-paper-dim rounded-card shadow-sm;
+}
+
+.btn-primary {
+  @apply bg-teal-600 text-white rounded-card px-4 py-2 font-medium hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply bg-white border border-teal-300 text-teal-700 rounded-card px-4 py-2 font-medium hover:bg-teal-50 transition-colors;
+}
+
+.btn-terracotta {
+  @apply bg-terracotta-500 text-white rounded-card px-4 py-2 font-medium hover:bg-terracotta-600 transition-colors;
+}
+
+.input {
+  @apply w-full border border-paper-dim rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm;
+}
+
+.label {
+  @apply text-xs font-mono uppercase tracking-wide text-teal-700/70;
+}
+
+.eyebrow {
+  @apply text-xs font-mono uppercase tracking-widest text-terracotta-500;
+}
