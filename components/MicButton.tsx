@@ -14,7 +14,7 @@ export default function MicButton({
   if (!supported) {
     return (
       <span className="text-xs text-paper-ink/40 font-mono">
-        Voice input isn't supported in this browser
+        Voice input isn&apos;t supported in this browser
       </span>
     );
   }
