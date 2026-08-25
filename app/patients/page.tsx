@@ -3,32 +3,47 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import type { Patient } from "@/lib/types";
+import type { Patient, PatientStatus } from "@/lib/types";
+
+function formatDate(d?: string | null) {
+  if (!d) return "—";
+  const date = new Date(d);
+  if (Number.isNaN(date.getTime())) return d;
+  return date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+}
 
 export default function PatientsPage() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | PatientStatus>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const loadPatients = async () => {
+    setLoading(true);
+    const { data } = await supabase.from("patients").select("*").order("created_at", { ascending: false });
+    setPatients(data ?? []);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase
-        .from("patients")
-        .select("*")
-        .order("created_at", { ascending: false });
-      setPatients(data ?? []);
-      setLoading(false);
-    })();
+    loadPatients();
   }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return patients;
-    return patients.filter(
-      (p) => p.name.toLowerCase().includes(q) || p.mobile?.includes(q) || p.email?.toLowerCase().includes(q)
-    );
-  }, [patients, query]);
+    return patients.filter((p) => {
+      if (statusFilter !== "all" && p.status !== statusFilter) return false;
+      if (!q) return true;
+      return (
+        p.name.toLowerCase().includes(q) ||
+        p.mobile?.includes(q) ||
+        p.email?.toLowerCase().includes(q) ||
+        p.ward?.toLowerCase().includes(q)
+      );
+    });
+  }, [patients, query, statusFilter]);
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -44,9 +59,9 @@ export default function PatientsPage() {
     list
       .map(
         (p) =>
-          `${p.name} — ${p.age}y ${p.sex}${p.mobile ? ` — ${p.mobile}` : ""}${
-            p.email ? ` — ${p.email}` : ""
-          }`
+          `${p.name} — ${p.age}y ${p.sex}${p.ward ? ` — ${p.ward}` : ""} — ${p.status}${
+            p.mobile ? ` — ${p.mobile}` : ""
+          }${p.email ? ` — ${p.email}` : ""}`
       )
       .join("\n");
 
@@ -63,6 +78,36 @@ export default function PatientsPage() {
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
+  const toggleStatus = async (p: Patient) => {
+    setBusyId(p.id);
+    const nextStatus: PatientStatus = p.status === "discharged" ? "admitted" : "discharged";
+    const { error } = await supabase.from("patients").update({ status: nextStatus }).eq("id", p.id);
+    if (!error) {
+      setPatients((prev) => prev.map((row) => (row.id === p.id ? { ...row, status: nextStatus } : row)));
+    }
+    setBusyId(null);
+  };
+
+  const removePatient = async (p: Patient) => {
+    const confirmed = window.confirm(
+      `Remove ${p.name} from the list? This also removes their consult notes and can't be undone.`
+    );
+    if (!confirmed) return;
+    setBusyId(p.id);
+    const { error } = await supabase.from("patients").delete().eq("id", p.id);
+    if (!error) {
+      setPatients((prev) => prev.filter((row) => row.id !== p.id));
+      setSelected((prev) => {
+        const next = new Set(prev);
+        next.delete(p.id);
+        return next;
+      });
+    } else {
+      window.alert(`Couldn't remove ${p.name}: ${error.message}`);
+    }
+    setBusyId(null);
+  };
+
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -75,40 +120,88 @@ export default function PatientsPage() {
         </Link>
       </div>
 
-      <input
-        className="input max-w-sm"
-        placeholder="Search by name, mobile, or email"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          className="input max-w-sm"
+          placeholder="Search by name, mobile, email, or ward"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <div className="flex items-center gap-1 text-xs font-mono">
+          {(["all", "admitted", "discharged"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={`px-2.5 py-1 rounded-full border capitalize ${
+                statusFilter === s
+                  ? "bg-teal-600 text-white border-teal-600"
+                  : "border-paper-dim text-paper-ink/60 hover:bg-teal-50"
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {loading && <p className="text-sm text-paper-ink/50">Loading patients…</p>}
       {!loading && filtered.length === 0 && (
-        <p className="text-sm text-paper-ink/50">No patients yet. Register your first one.</p>
+        <p className="text-sm text-paper-ink/50">No patients match here yet.</p>
       )}
 
       <div className="space-y-2">
         {filtered.map((p) => (
-          <div key={p.id} className="card p-3 flex items-center gap-3">
+          <div key={p.id} className="card p-3 flex items-start gap-3">
             <input
               type="checkbox"
               checked={selected.has(p.id)}
               onChange={() => toggle(p.id)}
-              className="h-4 w-4 accent-teal-600"
+              className="h-4 w-4 accent-teal-600 mt-1"
             />
-            <div className="flex-1">
-              <Link href={`/consult/${p.id}`} className="font-medium hover:text-teal-700">
-                {p.name}
-              </Link>
-              <div className="text-xs text-paper-ink/50 font-mono">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Link href={`/consult/${p.id}`} className="font-medium hover:text-teal-700">
+                  {p.name}
+                </Link>
+                <span
+                  className={`text-[10px] font-mono uppercase tracking-wide px-2 py-0.5 rounded-full ${
+                    p.status === "discharged"
+                      ? "bg-paper-dim text-paper-ink/50"
+                      : "bg-teal-100 text-teal-700"
+                  }`}
+                >
+                  {p.status}
+                </span>
+              </div>
+              <div className="text-xs text-paper-ink/50 font-mono mt-0.5">
                 {p.age}y · {p.sex}
                 {p.mobile ? ` · ${p.mobile}` : ""}
                 {p.email ? ` · ${p.email}` : ""}
               </div>
+              <div className="text-xs text-paper-ink/50 font-mono mt-0.5">
+                Ward: {p.ward || "—"} · Admitted: {formatDate(p.admission_date)}
+              </div>
+              {p.notes && <div className="text-xs text-paper-ink/70 mt-1">{p.notes}</div>}
             </div>
-            <Link href={`/consult/${p.id}`} className="btn-secondary text-xs">
-              Open consult
-            </Link>
+            <div className="flex flex-col items-end gap-1.5 shrink-0">
+              <Link href={`/consult/${p.id}`} className="btn-secondary text-xs">
+                Open consult
+              </Link>
+              <button
+                onClick={() => toggleStatus(p)}
+                disabled={busyId === p.id}
+                className="text-xs text-teal-700 hover:underline disabled:opacity-40"
+              >
+                {p.status === "discharged" ? "Mark admitted" : "Mark discharged"}
+              </button>
+              <button
+                onClick={() => removePatient(p)}
+                disabled={busyId === p.id}
+                className="text-xs text-terracotta-600 hover:underline disabled:opacity-40"
+              >
+                Remove
+              </button>
+            </div>
           </div>
         ))}
       </div>
