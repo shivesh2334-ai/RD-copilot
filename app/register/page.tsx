@@ -115,7 +115,7 @@ export default function RegisterPage() {
         <h1 className="text-2xl font-semibold mt-1">Register patients</h1>
         <p className="text-sm text-paper-ink/60 mt-1">
           Add one patient or a whole ward round at once. Speak a row — name, age, sex, and mobile
-          if you have it — and the fields fill themselves in; correct anything that's off before saving.
+          if you have it — and the fields fill themselves in; correct anything that&apos;s off before saving.
         </p>
       </div>
 
