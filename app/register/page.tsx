@@ -13,6 +13,13 @@ interface DraftPatient {
   sex: Sex;
   mobile: string;
   email: string;
+  ward: string;
+  admissionDate: string;
+  notes: string;
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function emptyRow(): DraftPatient {
@@ -23,6 +30,9 @@ function emptyRow(): DraftPatient {
     sex: "male",
     mobile: "",
     email: "",
+    ward: "",
+    admissionDate: todayISO(),
+    notes: "",
   };
 }
 
@@ -77,6 +87,10 @@ export default function RegisterPage() {
       sex: r.sex,
       mobile: r.mobile.trim() || null,
       email: r.email.trim() || null,
+      ward: r.ward.trim() || null,
+      admission_date: r.admissionDate || null,
+      status: "admitted" as const,
+      notes: r.notes.trim() || null,
     }));
 
     const { data, error: dbError } = await supabase.from("patients").insert(payload).select("id");
@@ -101,7 +115,7 @@ export default function RegisterPage() {
         <h1 className="text-2xl font-semibold mt-1">Register patients</h1>
         <p className="text-sm text-paper-ink/60 mt-1">
           Add one patient or a whole ward round at once. Speak a row — name, age, sex, and mobile
-          if you have it — and the fields fill themselves in; correct anything that&apos;s off before saving.
+          if you have it — and the fields fill themselves in; correct anything that's off before saving.
         </p>
       </div>
 
@@ -164,6 +178,24 @@ export default function RegisterPage() {
                   placeholder="Optional"
                 />
               </div>
+              <div>
+                <label className="label block mb-1">Ward</label>
+                <input
+                  className="input"
+                  value={row.ward}
+                  onChange={(e) => updateRow(row.key, { ward: e.target.value })}
+                  placeholder="e.g. ICU, Ward 4B"
+                />
+              </div>
+              <div>
+                <label className="label block mb-1">Admission date</label>
+                <input
+                  className="input"
+                  type="date"
+                  value={row.admissionDate}
+                  onChange={(e) => updateRow(row.key, { admissionDate: e.target.value })}
+                />
+              </div>
               <div className="sm:col-span-5">
                 <label className="label block mb-1">Email</label>
                 <input
@@ -171,6 +203,15 @@ export default function RegisterPage() {
                   value={row.email}
                   onChange={(e) => updateRow(row.key, { email: e.target.value })}
                   placeholder="Optional"
+                />
+              </div>
+              <div className="sm:col-span-5">
+                <label className="label block mb-1">Notes</label>
+                <input
+                  className="input"
+                  value={row.notes}
+                  onChange={(e) => updateRow(row.key, { notes: e.target.value })}
+                  placeholder="Optional — reason for admission, presenting complaint…"
                 />
               </div>
             </div>

@@ -9,9 +9,19 @@ create table if not exists patients (
   sex text not null check (sex in ('male', 'female', 'other')),
   mobile text,
   email text,
+  ward text,
+  admission_date date,
+  status text not null default 'admitted' check (status in ('admitted', 'discharged')),
+  notes text,
   created_by text,
   created_at timestamptz not null default now()
 );
+
+-- If you already ran this schema before this update, apply the new columns with:
+-- alter table patients add column if not exists ward text;
+-- alter table patients add column if not exists admission_date date;
+-- alter table patients add column if not exists status text not null default 'admitted' check (status in ('admitted', 'discharged'));
+-- alter table patients add column if not exists notes text;
 
 create table if not exists consults (
   id uuid primary key default uuid_generate_v4(),

@@ -48,7 +48,7 @@ export default function AskAiPage() {
         <h1 className="text-2xl font-semibold mt-1">Ask any clinical query</h1>
         <p className="text-sm text-paper-ink/60 mt-1">
           Not tied to a specific patient — dosing, guideline thresholds, differential prompts,
-          anything you&apos;d otherwise reach for a reference for.
+          anything you'd otherwise reach for a reference for.
         </p>
       </div>
 

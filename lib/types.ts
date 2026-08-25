@@ -1,4 +1,5 @@
 export type Sex = "male" | "female" | "other";
+export type PatientStatus = "admitted" | "discharged";
 
 export interface Patient {
   id: string;
@@ -7,6 +8,10 @@ export interface Patient {
   sex: Sex;
   mobile?: string | null;
   email?: string | null;
+  ward?: string | null;
+  admission_date?: string | null;
+  status: PatientStatus;
+  notes?: string | null;
   created_at: string;
   created_by?: string | null;
 }

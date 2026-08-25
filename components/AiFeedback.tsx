@@ -66,7 +66,7 @@ export default function AiFeedback({
       </button>
       {status === "saving" && <span className="text-xs text-paper-ink/40">saving…</span>}
       {status === "saved" && <span className="text-xs text-teal-600">recorded, thank you</span>}
-      {status === "error" && <span className="text-xs text-terracotta-600">couldn&apos;t save — try again</span>}
+      {status === "error" && <span className="text-xs text-terracotta-600">couldn't save — try again</span>}
     </div>
   );
 }
