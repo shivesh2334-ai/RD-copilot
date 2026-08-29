@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { ensureStorageSession } from "@/lib/supabase";
 import MicButton from "@/components/MicButton";
 import type { Sex } from "@/lib/types";
 
@@ -93,7 +93,16 @@ export default function RegisterPage() {
       notes: r.notes.trim() || null,
     }));
 
-    const { data, error: dbError } = await supabase.from("patients").insert(payload).select("id");
+    let db;
+    try {
+      db = await ensureStorageSession();
+    } catch (storageError) {
+      setSaving(false);
+      setError(storageError instanceof Error ? storageError.message : "Storage connection failed.");
+      return;
+    }
+
+    const { data, error: dbError } = await db.from("patients").insert(payload).select("id");
     setSaving(false);
 
     if (dbError) {

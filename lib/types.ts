@@ -13,6 +13,7 @@ export interface Patient {
   status: PatientStatus;
   notes?: string | null;
   created_at: string;
+  owner_id?: string;
   created_by?: string | null;
 }
 
@@ -27,6 +28,7 @@ export interface Consult {
   ai_raw_response?: string | null;
   created_at: string;
   updated_at: string;
+  owner_id?: string;
 }
 
 export type FeedbackSource = "consult_ai" | "ask_ai";

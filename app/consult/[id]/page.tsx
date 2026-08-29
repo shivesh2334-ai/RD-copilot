@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { ensureStorageSession } from "@/lib/supabase";
 import MicButton from "@/components/MicButton";
 import AiFeedback from "@/components/AiFeedback";
 import type { Patient, Consult } from "@/lib/types";
@@ -23,29 +23,42 @@ export default function ConsultPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
-      const { data: p } = await supabase.from("patients").select("*").eq("id", patientId).single();
-      setPatient(p);
+      try {
+        const db = await ensureStorageSession();
+        const { data: p, error: patientError } = await db
+          .from("patients")
+          .select("*")
+          .eq("id", patientId)
+          .single();
+        if (patientError) throw patientError;
+        setPatient(p);
 
-      const { data: c } = await supabase
-        .from("consults")
-        .select("*")
-        .eq("patient_id", patientId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        const { data: c, error: consultError } = await db
+          .from("consults")
+          .select("*")
+          .eq("patient_id", patientId)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (consultError) throw consultError;
 
-      if (c) {
-        setConsultId(c.id);
-        setNotes(c.notes ?? "");
-        setTreatment(c.plan_treatment ?? "");
-        setInvestigation(c.plan_investigation ?? "");
-        setComments(c.plan_comments ?? "");
-        setAiSummary(c.ai_summary ?? null);
+        if (c) {
+          setConsultId(c.id);
+          setNotes(c.notes ?? "");
+          setTreatment(c.plan_treatment ?? "");
+          setInvestigation(c.plan_investigation ?? "");
+          setComments(c.plan_comments ?? "");
+          setAiSummary(c.ai_summary ?? null);
+        }
+      } catch (error) {
+        setLoadError(error instanceof Error ? error.message : "Storage connection failed.");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
   }, [patientId]);
 
@@ -61,9 +74,10 @@ export default function ConsultPage() {
       updated_at: new Date().toISOString(),
     };
 
+    const db = await ensureStorageSession();
     const { data, error } = consultId
-      ? await supabase.from("consults").update(payload).eq("id", consultId).select("id").single()
-      : await supabase.from("consults").insert(payload).select("id").single();
+      ? await db.from("consults").update(payload).eq("id", consultId).select("id").single()
+      : await db.from("consults").insert(payload).select("id").single();
 
     if (error) {
       setSaveStatus("error");
@@ -124,6 +138,7 @@ export default function ConsultPage() {
   };
 
   if (loading) return <p className="text-sm text-paper-ink/50">Loading consult…</p>;
+  if (loadError) return <p className="text-sm text-terracotta-600">Storage unavailable: {loadError}</p>;
   if (!patient) return <p className="text-sm text-terracotta-600">Patient not found.</p>;
 
   return (

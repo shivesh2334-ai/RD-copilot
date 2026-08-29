@@ -21,14 +21,24 @@ cp .env.example .env.local   # fill in the values below
 npm run dev
 ```
 
-## 2. Supabase
+## 2. Free storage (Supabase Free plan)
 
 1. Create a free project at supabase.com.
-2. In the SQL editor, run `supabase/schema.sql` — creates `patients`, `consults`, `ai_feedback`.
-3. Copy the Project URL and anon key into `.env.local` / Vercel env vars.
-4. The dev RLS policies in the schema allow the anon key to read/write everything, which is
-   fine to get moving fast — tighten before you're handling real patient data (add Supabase
-   Auth so notes are scoped per resident).
+2. In **Authentication → Sign In / Providers → Anonymous**, enable anonymous sign-ins.
+3. In the SQL editor, run `supabase/schema.sql`. This creates `patients`, `consults`, and
+   `ai_feedback` with indexed owner columns and Row Level Security.
+4. Copy the Project URL and **publishable/anon key** into `.env.local` and the matching Vercel
+   environment variables. A service-role key is not needed and must not be exposed.
+
+The app silently creates a free anonymous Supabase session in the browser. Each browser session
+can only read and modify its own records; the old public read/write policies have been removed.
+The session persists in that browser, but clearing site data creates a new identity. Add named
+staff accounts before using this as a shared or production clinical record system.
+
+### Upgrading the original prototype database
+
+Export any prototype records you need, then run `supabase/migrate_secure_storage.sql`. Existing
+unowned rows remain inaccessible by design. For a new/empty project, use only `schema.sql`.
 
 ## 3. MedGemma
 
@@ -83,7 +93,6 @@ npm i -g vercel
 vercel link
 vercel env add NEXT_PUBLIC_SUPABASE_URL
 vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
-vercel env add SUPABASE_SERVICE_ROLE_KEY
 vercel env add MEDGEMMA_ENDPOINT
 vercel env add ANTHROPIC_API_KEY
 vercel env add GOOGLE_SHEETS_WEBHOOK_URL
