@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { FeedbackSource } from "@/lib/types";
+import { ensureStorageSession } from "@/lib/supabase";
 
 export default function AiFeedback({
   source,
@@ -23,9 +24,14 @@ export default function AiFeedback({
     setVote(v);
     setStatus("saving");
     try {
+      const db = await ensureStorageSession();
+      const { data: sessionData } = await db.auth.getSession();
       const res = await fetch("/api/feedback", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionData.session?.access_token ?? ""}`,
+        },
         body: JSON.stringify({
           source,
           vote: v,

@@ -1,11 +1,13 @@
--- Run this in the Supabase SQL editor for a new project.
+-- Supabase Free plan schema for Rounds.
+-- Enable Authentication -> Providers -> Anonymous Sign-Ins before using the app.
 
 create extension if not exists "uuid-ossp";
 
 create table if not exists patients (
   id uuid primary key default uuid_generate_v4(),
+  owner_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   name text not null,
-  age int not null,
+  age int not null check (age between 0 and 130),
   sex text not null check (sex in ('male', 'female', 'other')),
   mobile text,
   email text,
@@ -17,14 +19,9 @@ create table if not exists patients (
   created_at timestamptz not null default now()
 );
 
--- If you already ran this schema before this update, apply the new columns with:
--- alter table patients add column if not exists ward text;
--- alter table patients add column if not exists admission_date date;
--- alter table patients add column if not exists status text not null default 'admitted' check (status in ('admitted', 'discharged'));
--- alter table patients add column if not exists notes text;
-
 create table if not exists consults (
   id uuid primary key default uuid_generate_v4(),
+  owner_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   patient_id uuid not null references patients(id) on delete cascade,
   notes text default '',
   plan_treatment text default '',
@@ -38,6 +35,7 @@ create table if not exists consults (
 
 create table if not exists ai_feedback (
   id uuid primary key default uuid_generate_v4(),
+  owner_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   source text not null check (source in ('consult_ai', 'ask_ai')),
   vote text not null check (vote in ('up', 'down')),
   prompt text not null,
@@ -47,16 +45,33 @@ create table if not exists ai_feedback (
   created_at timestamptz not null default now()
 );
 
+create index if not exists patients_owner_id_idx on patients(owner_id);
+create index if not exists consults_owner_id_idx on consults(owner_id);
 create index if not exists consults_patient_id_idx on consults(patient_id);
+create index if not exists ai_feedback_owner_id_idx on ai_feedback(owner_id);
 create index if not exists ai_feedback_source_idx on ai_feedback(source);
 
--- Row Level Security: enable and open up for the anon key during development.
--- Tighten these policies before handling real patient data in production
--- (e.g. scope by authenticated resident, add Supabase Auth).
 alter table patients enable row level security;
 alter table consults enable row level security;
 alter table ai_feedback enable row level security;
 
-create policy "dev_all_patients" on patients for all using (true) with check (true);
-create policy "dev_all_consults" on consults for all using (true) with check (true);
-create policy "dev_all_feedback" on ai_feedback for all using (true) with check (true);
+-- Remove the original prototype policies, if this is an upgrade.
+drop policy if exists "dev_all_patients" on patients;
+drop policy if exists "dev_all_consults" on consults;
+drop policy if exists "dev_all_feedback" on ai_feedback;
+
+drop policy if exists "owners_manage_patients" on patients;
+create policy "owners_manage_patients" on patients
+  for all to authenticated using (auth.uid() = owner_id) with check (auth.uid() = owner_id);
+
+drop policy if exists "owners_manage_consults" on consults;
+create policy "owners_manage_consults" on consults
+  for all to authenticated using (auth.uid() = owner_id) with check (
+    auth.uid() = owner_id and exists (
+      select 1 from patients where patients.id = patient_id and patients.owner_id = auth.uid()
+    )
+  );
+
+drop policy if exists "owners_manage_feedback" on ai_feedback;
+create policy "owners_manage_feedback" on ai_feedback
+  for all to authenticated using (auth.uid() = owner_id) with check (auth.uid() = owner_id);

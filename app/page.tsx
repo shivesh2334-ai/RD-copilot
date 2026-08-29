@@ -1,14 +1,26 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { ensureStorageSession } from "@/lib/supabase";
+import type { Patient } from "@/lib/types";
 
-export const dynamic = "force-dynamic";
+export default function Home() {
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [storageError, setStorageError] = useState<string | null>(null);
 
-export default async function Home() {
-  const { data: patients } = await supabase
-    .from("patients")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(6);
+  useEffect(() => {
+    (async () => {
+      try {
+        const db = await ensureStorageSession();
+        const { data, error } = await db.from("patients").select("*").order("created_at", { ascending: false }).limit(6);
+        if (error) throw error;
+        setPatients(data ?? []);
+      } catch (error) {
+        setStorageError(error instanceof Error ? error.message : "Storage connection failed.");
+      }
+    })();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -43,24 +55,15 @@ export default async function Home() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold">Recently registered</h2>
-          <Link href="/patients" className="text-sm text-teal-700 hover:underline">
-            View all
-          </Link>
+          <Link href="/patients" className="text-sm text-teal-700 hover:underline">View all</Link>
         </div>
-        {(!patients || patients.length === 0) && (
-          <p className="text-sm text-paper-ink/50">No patients registered yet.</p>
-        )}
+        {storageError && <p className="text-sm text-terracotta-600">Storage unavailable: {storageError}</p>}
+        {!storageError && patients.length === 0 && <p className="text-sm text-paper-ink/50">No patients registered yet.</p>}
         <div className="space-y-2">
-          {patients?.map((p) => (
-            <Link
-              key={p.id}
-              href={`/consult/${p.id}`}
-              className="card p-3 flex items-center justify-between hover:border-teal-300 transition-colors"
-            >
+          {patients.map((p) => (
+            <Link key={p.id} href={`/consult/${p.id}`} className="card p-3 flex items-center justify-between hover:border-teal-300 transition-colors">
               <span className="font-medium">{p.name}</span>
-              <span className="text-xs text-paper-ink/50 font-mono">
-                {p.age}y · {p.sex}
-              </span>
+              <span className="text-xs text-paper-ink/50 font-mono">{p.age}y · {p.sex}</span>
             </Link>
           ))}
         </div>

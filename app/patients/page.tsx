@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { ensureStorageSession } from "@/lib/supabase";
 import type { Patient, PatientStatus } from "@/lib/types";
 
 function formatDate(d?: string | null) {
@@ -19,11 +19,19 @@ export default function PatientsPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | PatientStatus>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [storageError, setStorageError] = useState<string | null>(null);
 
   const loadPatients = async () => {
     setLoading(true);
-    const { data } = await supabase.from("patients").select("*").order("created_at", { ascending: false });
-    setPatients(data ?? []);
+    try {
+      const db = await ensureStorageSession();
+      const { data, error } = await db.from("patients").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      setPatients(data ?? []);
+      setStorageError(null);
+    } catch (error) {
+      setStorageError(error instanceof Error ? error.message : "Storage connection failed.");
+    }
     setLoading(false);
   };
 
@@ -81,7 +89,8 @@ export default function PatientsPage() {
   const toggleStatus = async (p: Patient) => {
     setBusyId(p.id);
     const nextStatus: PatientStatus = p.status === "discharged" ? "admitted" : "discharged";
-    const { error } = await supabase.from("patients").update({ status: nextStatus }).eq("id", p.id);
+    const db = await ensureStorageSession();
+    const { error } = await db.from("patients").update({ status: nextStatus }).eq("id", p.id);
     if (!error) {
       setPatients((prev) => prev.map((row) => (row.id === p.id ? { ...row, status: nextStatus } : row)));
     }
@@ -94,7 +103,8 @@ export default function PatientsPage() {
     );
     if (!confirmed) return;
     setBusyId(p.id);
-    const { error } = await supabase.from("patients").delete().eq("id", p.id);
+    const db = await ensureStorageSession();
+    const { error } = await db.from("patients").delete().eq("id", p.id);
     if (!error) {
       setPatients((prev) => prev.filter((row) => row.id !== p.id));
       setSelected((prev) => {
@@ -145,6 +155,7 @@ export default function PatientsPage() {
       </div>
 
       {loading && <p className="text-sm text-paper-ink/50">Loading patients…</p>}
+      {storageError && <p className="text-sm text-terracotta-600">Storage unavailable: {storageError}</p>}
       {!loading && filtered.length === 0 && (
         <p className="text-sm text-paper-ink/50">No patients match here yet.</p>
       )}
