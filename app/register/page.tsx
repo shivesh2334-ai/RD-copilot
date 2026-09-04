@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ensureStorageSession } from "@/lib/supabase";
 import MicButton from "@/components/MicButton";
@@ -59,6 +59,8 @@ export default function RegisterPage() {
   const [rows, setRows] = useState<DraftPatient[]>([emptyRow()]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [parsingKey, setParsingKey] = useState<string | null>(null);
+  const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const updateRow = (key: string, patch: Partial<DraftPatient>) => {
     setRows((prev) => prev.map((r) => (r.key === key ? { ...r, ...patch } : r)));
@@ -70,6 +72,27 @@ export default function RegisterPage() {
 
   const handleVoice = (key: string, text: string) => {
     updateRow(key, parseVoiceLine(text));
+  };
+
+  const parseUpload = async (key: string, event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setError(null);
+    setParsingKey(key);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const response = await fetch("/api/parse-patient", { method: "POST", body: form });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not parse this file.");
+      const patient = data.patient as Partial<DraftPatient>;
+      updateRow(key, Object.fromEntries(Object.entries(patient).filter(([, value]) => value)));
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : "Could not parse this file.");
+    } finally {
+      setParsingKey(null);
+    }
   };
 
   const canSubmit = rows.every((r) => r.name.trim() && r.age.trim() && r.sex);
@@ -134,6 +157,21 @@ export default function RegisterPage() {
             <div className="flex items-center justify-between mb-3">
               <span className="label">Patient {i + 1}</span>
               <div className="flex items-center gap-3">
+                <input
+                  ref={(element) => { fileInputs.current[row.key] = element; }}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,.pdf"
+                  className="hidden"
+                  onChange={(event) => parseUpload(row.key, event)}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputs.current[row.key]?.click()}
+                  disabled={parsingKey !== null}
+                  className="btn-secondary text-xs disabled:opacity-50"
+                >
+                  {parsingKey === row.key ? "Reading…" : "Parse image / PDF"}
+                </button>
                 <MicButton label="Dictate row" onText={(t) => handleVoice(row.key, t)} />
                 {rows.length > 1 && (
                   <button
@@ -145,6 +183,9 @@ export default function RegisterPage() {
                 )}
               </div>
             </div>
+            <p className="text-xs text-paper-ink/45 mb-3">
+              Details are extracted into the fields below. The uploaded file is not saved.
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
               <div className="sm:col-span-2">
                 <label className="label block mb-1">Name *</label>

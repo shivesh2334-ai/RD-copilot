@@ -3,8 +3,9 @@
 Next.js 14 / TypeScript / Tailwind / Supabase app for resident doctors:
 
 - **Register** — multiple patients at once (name, age, sex; mobile and email optional), with
-  voice dictation that fills in each row.
-- **Patients** — search, open a consult, multi-select and share via WhatsApp or email.
+  voice dictation or one-time image/PDF parsing that fills in each row. Uploaded files are not stored.
+- **Patients** — search, review date-wise consultation snippets, select individual visits, and share
+  their complete notes and plan via WhatsApp or email.
 - **Consult** — free-text notes plus a structured plan (treatment / investigation / comments),
   each field voice-dictatable.
 - **AI analysis** — sends the consult to your MedGemma endpoint for a second-opinion summary.
@@ -12,6 +13,7 @@ Next.js 14 / TypeScript / Tailwind / Supabase app for resident doctors:
 - **Feedback** — thumbs up/down on every AI output, logged to Supabase and (optionally) a
   Google Sheet for research.
 - **Save / share** — save a consult, or share it straight to the patient's WhatsApp/email.
+- **Visit history** — start a new dated visit for a returning patient without overwriting prior notes.
 
 ## 1. Local setup
 
@@ -105,6 +107,12 @@ Dictation uses the browser's built-in Web Speech API (`webkitSpeechRecognition`)
 without any extra service — best support is in Chrome/Edge on desktop and Android; Safari/iOS
 support is more limited. On the registration page, dictating a row like "Ramesh Kumar, 54,
 male, mobile 9876543210" auto-fills name/age/sex/mobile; check and correct before saving.
+
+## Image / PDF patient registration
+
+Registration accepts JPG, PNG, GIF, WebP, and PDF files up to 4 MB. The file is sent directly to
+the configured Anthropic model for one-time extraction into the registration fields and is never
+written to Supabase or another app storage bucket. Always verify extracted demographics before saving.
 
 ## Clinical safety
 
