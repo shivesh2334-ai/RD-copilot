@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ensureStorageSession } from "@/lib/supabase";
-import type { Patient, PatientStatus } from "@/lib/types";
+import type { Consult, Patient, PatientStatus } from "@/lib/types";
 
 function formatDate(d?: string | null) {
   if (!d) return "—";
@@ -14,10 +14,11 @@ function formatDate(d?: string | null) {
 
 export default function PatientsPage() {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [consults, setConsults] = useState<Consult[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | PatientStatus>("all");
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selectedVisits, setSelectedVisits] = useState<Set<string>>(new Set());
   const [busyId, setBusyId] = useState<string | null>(null);
   const [storageError, setStorageError] = useState<string | null>(null);
 
@@ -25,9 +26,14 @@ export default function PatientsPage() {
     setLoading(true);
     try {
       const db = await ensureStorageSession();
-      const { data, error } = await db.from("patients").select("*").order("created_at", { ascending: false });
-      if (error) throw error;
-      setPatients(data ?? []);
+      const [patientResult, consultResult] = await Promise.all([
+        db.from("patients").select("*").order("created_at", { ascending: false }),
+        db.from("consults").select("*").order("created_at", { ascending: false }),
+      ]);
+      if (patientResult.error) throw patientResult.error;
+      if (consultResult.error) throw consultResult.error;
+      setPatients(patientResult.data ?? []);
+      setConsults(consultResult.data ?? []);
       setStorageError(null);
     } catch (error) {
       setStorageError(error instanceof Error ? error.message : "Storage connection failed.");
@@ -53,36 +59,48 @@ export default function PatientsPage() {
     });
   }, [patients, query, statusFilter]);
 
-  const toggle = (id: string) => {
-    setSelected((prev) => {
+  const toggleVisit = (id: string) => {
+    setSelectedVisits((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
   };
 
-  const selectedPatients = patients.filter((p) => selected.has(p.id));
+  const patientById = useMemo(() => new Map(patients.map((patient) => [patient.id, patient])), [patients]);
+  const visitsByPatient = useMemo(() => {
+    const grouped = new Map<string, Consult[]>();
+    consults.forEach((consult) => grouped.set(consult.patient_id, [...(grouped.get(consult.patient_id) || []), consult]));
+    return grouped;
+  }, [consults]);
+  const selectedConsults = consults.filter((consult) => selectedVisits.has(consult.id));
 
-  const summaryText = (list: Patient[]) =>
-    list
-      .map(
-        (p) =>
-          `${p.name} — ${p.age}y ${p.sex}${p.ward ? ` — ${p.ward}` : ""} — ${p.status}${
-            p.mobile ? ` — ${p.mobile}` : ""
-          }${p.email ? ` — ${p.email}` : ""}`
-      )
-      .join("\n");
+  const summaryText = (list: Consult[]) =>
+    list.map((consult) => {
+      const patient = patientById.get(consult.patient_id);
+      return [
+        `${patient?.name || "Patient"} — ${patient?.age ?? "—"}y ${patient?.sex || ""}`,
+        `Seen: ${formatDate(consult.created_at)}${patient?.ward ? ` · Ward: ${patient.ward}` : ""}`,
+        patient?.mobile ? `Mobile: ${patient.mobile}` : "",
+        patient?.email ? `Email: ${patient.email}` : "",
+        `Notes: ${consult.notes || "—"}`,
+        `Treatment: ${consult.plan_treatment || "—"}`,
+        `Investigations: ${consult.plan_investigation || "—"}`,
+        `Comments: ${consult.plan_comments || "—"}`,
+        consult.ai_summary ? `AI summary: ${consult.ai_summary}` : "",
+      ].filter(Boolean).join("\n");
+    }).join("\n\n--------------------\n\n");
 
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
-      `Patient list (${selectedPatients.length}):\n${summaryText(selectedPatients)}`
+      `Visit snippets (${selectedConsults.length}):\n\n${summaryText(selectedConsults)}`
     );
     window.open(`https://wa.me/?text=${text}`, "_blank");
   };
 
   const shareEmail = () => {
-    const subject = encodeURIComponent(`Patient list — ${selectedPatients.length} patients`);
-    const body = encodeURIComponent(summaryText(selectedPatients));
+    const subject = encodeURIComponent(`Patient visit snippets — ${selectedConsults.length} selected`);
+    const body = encodeURIComponent(summaryText(selectedConsults));
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
@@ -107,9 +125,9 @@ export default function PatientsPage() {
     const { error } = await db.from("patients").delete().eq("id", p.id);
     if (!error) {
       setPatients((prev) => prev.filter((row) => row.id !== p.id));
-      setSelected((prev) => {
+      setSelectedVisits((prev) => {
         const next = new Set(prev);
-        next.delete(p.id);
+        consults.filter((consult) => consult.patient_id === p.id).forEach((consult) => next.delete(consult.id));
         return next;
       });
     } else {
@@ -162,13 +180,8 @@ export default function PatientsPage() {
 
       <div className="space-y-2">
         {filtered.map((p) => (
-          <div key={p.id} className="card p-3 flex items-start gap-3">
-            <input
-              type="checkbox"
-              checked={selected.has(p.id)}
-              onChange={() => toggle(p.id)}
-              className="h-4 w-4 accent-teal-600 mt-1"
-            />
+          <div key={p.id} className="card p-4">
+            <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <Link href={`/consult/${p.id}`} className="font-medium hover:text-teal-700">
@@ -213,20 +226,51 @@ export default function PatientsPage() {
                 Remove
               </button>
             </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-paper-dim">
+              <div className="label mb-2">Seen date-wise</div>
+              {(visitsByPatient.get(p.id) || []).length === 0 ? (
+                <p className="text-xs text-paper-ink/45">No consultation snippets saved yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {(visitsByPatient.get(p.id) || []).map((visit) => (
+                    <label key={visit.id} className="flex items-start gap-2 rounded-md bg-teal-50/60 border border-teal-100 p-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedVisits.has(visit.id)}
+                        onChange={() => toggleVisit(visit.id)}
+                        className="h-4 w-4 accent-teal-600 mt-0.5"
+                      />
+                      <span className="min-w-0">
+                        <span className="block text-xs font-mono font-medium text-teal-800">{formatDate(visit.created_at)}</span>
+                        <span className="block text-sm text-paper-ink/75 mt-0.5 line-clamp-2">
+                          {visit.notes || visit.plan_treatment || visit.plan_investigation || "Consultation saved"}
+                        </span>
+                        {(visit.plan_treatment || visit.plan_investigation) && (
+                          <span className="block text-xs text-paper-ink/50 mt-1 line-clamp-1">
+                            {[visit.plan_treatment && `Rx: ${visit.plan_treatment}`, visit.plan_investigation && `Tests: ${visit.plan_investigation}`].filter(Boolean).join(" · ")}
+                          </span>
+                        )}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
 
-      {selected.size > 0 && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 card px-4 py-3 flex items-center gap-3 shadow-lg">
-          <span className="text-sm font-medium">{selected.size} selected</span>
+      {selectedVisits.size > 0 && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 card px-4 py-3 flex flex-wrap items-center justify-center gap-3 shadow-lg w-max max-w-[calc(100vw-2rem)]">
+          <span className="text-sm font-medium whitespace-nowrap">{selectedVisits.size} visit{selectedVisits.size === 1 ? "" : "s"} selected</span>
           <button onClick={shareWhatsApp} className="btn-primary text-sm">
             Share via WhatsApp
           </button>
           <button onClick={shareEmail} className="btn-secondary text-sm">
             Share via email
           </button>
-          <button onClick={() => setSelected(new Set())} className="text-xs text-paper-ink/50 hover:underline">
+          <button onClick={() => setSelectedVisits(new Set())} className="text-xs text-paper-ink/50 hover:underline">
             Clear
           </button>
         </div>

@@ -25,6 +25,16 @@ export default function ConsultPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  const startNewVisit = () => {
+    setConsultId(null);
+    setNotes("");
+    setTreatment("");
+    setInvestigation("");
+    setComments("");
+    setAiSummary(null);
+    setSaveStatus("idle");
+  };
+
   useEffect(() => {
     (async () => {
       try {
@@ -143,14 +153,21 @@ export default function ConsultPage() {
 
   return (
     <div className="space-y-6 pb-24">
-      <div>
-        <span className="eyebrow">consult</span>
-        <h1 className="text-2xl font-semibold mt-1">{patient.name}</h1>
-        <p className="text-sm text-paper-ink/50 font-mono">
-          {patient.age}y · {patient.sex}
-          {patient.mobile ? ` · ${patient.mobile}` : ""}
-          {patient.email ? ` · ${patient.email}` : ""}
-        </p>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <span className="eyebrow">consult</span>
+          <h1 className="text-2xl font-semibold mt-1">{patient.name}</h1>
+          <p className="text-sm text-paper-ink/50 font-mono">
+            {patient.age}y · {patient.sex}
+            {patient.mobile ? ` · ${patient.mobile}` : ""}
+            {patient.email ? ` · ${patient.email}` : ""}
+          </p>
+        </div>
+        {consultId && (
+          <button onClick={startNewVisit} className="btn-secondary text-sm">
+            + Start new dated visit
+          </button>
+        )}
       </div>
 
       <section className="card p-4 space-y-2">
