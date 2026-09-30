@@ -58,7 +58,6 @@ export default function RootLayout({
           <header className="border-b border-paper-dim bg-white/70 backdrop-blur sticky top-0 z-20">
             <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-3">
               <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
-                <img src="/emc-header.jpg" alt="EMC Easy My Care" className="block h-[44px] w-[122px] sm:h-[52px] sm:w-[144px] shrink-0 object-contain" />
                 <span className="flex shrink-0 flex-col justify-center leading-none">
                   <span className="font-serif text-xl sm:text-2xl font-semibold tracking-tight text-teal-700 whitespace-nowrap">Mediround</span>
                   <span className="mt-1 text-[8px] sm:text-[10px] uppercase tracking-[0.18em] text-paper-ink/50 whitespace-nowrap">by EMC</span>
