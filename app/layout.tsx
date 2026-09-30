@@ -3,7 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rounds — Resident Doctor Workspace",
+  title: "Mediround — Resident Doctor Workspace",
   description: "Register patients, consult, and get AI-assisted notes on rounds.",
 };
 
@@ -57,9 +57,12 @@ export default function RootLayout({
         <div className="min-h-screen flex flex-col">
           <header className="border-b border-paper-dim bg-white/70 backdrop-blur sticky top-0 z-20">
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-              <Link href="/" className="flex items-baseline gap-2">
-                <span className="font-serif text-xl font-semibold text-teal-700">Rounds</span>
-                <span className="eyebrow hidden sm:inline">resident workspace</span>
+              <Link href="/" className="flex items-center gap-2.5">
+                <img src="/emc-logo.png" alt="EMC Easy My Care" className="h-10 w-10 rounded-full object-contain" />
+                <span className="flex flex-col leading-none">
+                  <span className="font-serif text-xl font-semibold text-teal-700">Mediround</span>
+                  <span className="mt-1 text-[10px] uppercase tracking-[0.2em] text-paper-ink/45">by EMC</span>
+                </span>
               </Link>
               <nav className="flex items-center gap-1 text-sm font-medium">
                 <Link href="/register" className="px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Register</Link>
@@ -108,7 +111,7 @@ export default function RootLayout({
           </div>
 
           <footer className="text-center text-xs text-paper-ink/40 font-mono py-4 border-t border-paper-dim">
-            Rounds · built for resident workflows · not a substitute for clinical judgement
+            Mediround · by EMC · built for resident workflows · not a substitute for clinical judgement
           </footer>
         </div>
       </body>
