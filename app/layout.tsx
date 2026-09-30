@@ -64,8 +64,8 @@ export default function RootLayout({
                 </span>
               </Link>
               <nav className="flex min-w-0 items-center justify-end gap-0 sm:gap-1 text-xs sm:text-sm font-medium">
-                <Link href="/register" className="hidden sm:inline-flex px-2 lg:px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Register</Link>
-                <Link href="/patients" className="hidden md:inline-flex px-2 lg:px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Patients</Link>
+                <Link href="/register" className="inline-flex px-2 lg:px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Register</Link>
+                <Link href="/patients" className="inline-flex px-2 lg:px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Patients</Link>
                 <Link href="/ask-ai" className="px-2 lg:px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700 whitespace-nowrap">Ask AI</Link>
               </nav>
             </div>
