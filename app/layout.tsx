@@ -28,6 +28,7 @@ const clinicalLibrary = [
       { label: "Pacemaker and device care", href: "https://pacemaker-care.vercel.app/" },
       { label: "Lifestyle guide in CVD", href: "https://cardio-lifestyle-guide.vercel.app/" },
       { label: "Warfarin guide", href: "https://warfarin-guide.vercel.app/" },
+      { label: "HFpEF", href: "https://hfpef-clu.vercel.app/" },
     ],
   },
   {
