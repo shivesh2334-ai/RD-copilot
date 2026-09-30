@@ -12,36 +12,36 @@ const clinicalLibrary = [
     heading: "Internal medicine",
     items: [
       { label: "Antibiotics guide", href: "https://antibiotics-guid-clay.vercel.app/" },
-      { label: "Sepsis", href: "https://vercel.com/shiveshs-projects-7ed9268d/sepsis/Htbaq3aHHkSfcbKZ1c3r1bU87sav" },
-      { label: "Sexually Transmitted Infections", href: "https://vercel.com/shiveshs-projects-7ed9268d/sti-clinical-workbench/GvroUBo9ions47AoPttr7pwHPVmE" },
-      { label: "Diabetes in admitted patients", href: "https://vercel.com/shiveshs-projects-7ed9268d/inpatient-diabetes-care/Ec16DADXKpuwrmKKnR8kbtuNy1U1" },
-      { label: "Hypertension in Emergency", href: "https://vercel.com/shiveshs-projects-7ed9268d/hypertension-er/8cDjcGPKR1ZJ16i5cQNc6wHvSWC3" },
+      { label: "Sepsis", href: "https://sepsis-eight.vercel.app/" },
+      { label: "Sexually Transmitted Infections", href: "https://sti-clinical-workbench.vercel.app/" },
+      { label: "Diabetes in admitted patients", href: "https://inpatient-diabetes-care.vercel.app/" },
+      { label: "Hypertension in Emergency", href: "https://hypertension-er.vercel.app/" },
     ],
   },
   {
     heading: "Cardiology",
     items: [
-      { label: "Acute coronary syndrome", href: "https://vercel.com/shiveshs-projects-7ed9268d/acs-copilot/6kqBNHdkLjLZh52vobgRcyPNJp9d" },
-      { label: "Perioperative risk assessment", href: "https://vercel.com/shiveshs-projects-7ed9268d/periop-risk-assessment/BQJNiGZ4ft82v2ipydLS8UBFwRS3" },
-      { label: "Ventricular tachycardia origin", href: "https://vercel.com/shiveshs-projects-7ed9268d/va-origin-lab/DewyafERHGLsPuhuqAoCW9WSP3iz" },
-      { label: "Atrial fibrillation advisor", href: "https://vercel.com/shiveshs-projects-7ed9268d/af-advisor/3LZX9SACefxhsfMgPSFnhNJWvk56" },
+      { label: "Acute coronary syndrome", href: "https://acs-copilot.vercel.app/" },
+      { label: "Perioperative risk assessment", href: "https://periop-risk-assessment.vercel.app/" },
+      { label: "Ventricular tachycardia origin", href: "https://va-origin-lab.vercel.app/" },
+      { label: "Atrial fibrillation advisor", href: "https://af-advisor.vercel.app/" },
       { label: "Pacemaker and device care", href: "https://pacemaker-care.vercel.app/" },
-      { label: "Lifestyle guide in CVD", href: "https://vercel.com/shiveshs-projects-7ed9268d/cardio-lifestyle-guide/En46wEFqM7QkAavUcmzfvyAEKDxD" },
-      { label: "Warfarin guide", href: "https://vercel.com/shiveshs-projects-7ed9268d/warfarin-guide/9KK9pxZKSGfkq5dMvPnfzBfoHzGU" },
+      { label: "Lifestyle guide in CVD", href: "https://cardio-lifestyle-guide.vercel.app/" },
+      { label: "Warfarin guide", href: "https://warfarin-guide.vercel.app/" },
     ],
   },
   {
-    heading: "Intensive care",
+    heading: "ICU",
     items: [
-      { label: "Infusion Drug dose calculator", href: "https://vercel.com/shiveshs-projects-7ed9268d/icu-drugs-clu/6eMC4EMgPQ5UJrfXgKP5SQfqFisT" },
+      { label: "Infusion Drug dose calculator", href: "https://icu-drugs-clu.vercel.app/" },
     ],
   },
   {
     heading: "iLearn",
     items: [
-      { label: "ECG", href: "https://vercel.com/shiveshs-projects-7ed9268d/ecg-vercel-xwho/5H1UWNReZWGUjxfjzgSmNB6THdX9" },
-      { label: "Strain echo", href: "https://vercel.com/shiveshs-projects-7ed9268d/strain-echo-master/DnJ2VNfuVyaKn2dauRcJ79QY2cVr" },
-      { label: "Volume assessment", href: "https://vercel.com/shiveshs-projects-7ed9268d/volume-overload-guide-1/HQVRea6hFsTxpZqJvKZTS1tbvwen" },
+      { label: "ECG", href: "https://ecg-vercel-xwho.vercel.app/" },
+      { label: "Strain echo", href: "https://strain-echo-master.vercel.app/" },
+      { label: "Volume assessment", href: "https://volume-overload-guide-1.vercel.app/" },
     ],
   },
 ];
@@ -76,11 +76,14 @@ export default function RootLayout({
                   <p className="eyebrow">Clinical library</p>
                   <p className="text-xs text-paper-ink/50 mt-1">Quick access to clinical tools and learning apps</p>
                 </div>
-                <div className="flex md:block gap-5 overflow-x-auto pb-2 md:pb-0">
+                <div className="space-y-2">
                   {clinicalLibrary.map((section) => (
-                    <section key={section.heading} className="min-w-56 md:min-w-0 mb-5">
-                      <h2 className="font-serif font-semibold text-sm text-teal-800 mb-2">{section.heading}</h2>
-                      <ul className="space-y-1">
+                    <details key={section.heading} className="group rounded-lg border border-paper-dim bg-white">
+                      <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg px-3 py-3 font-serif font-semibold text-sm text-teal-800 hover:bg-teal-50">
+                        <span>{section.heading}</span>
+                        <span className="text-paper-ink/40 transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
+                      </summary>
+                      <ul className="space-y-1 border-t border-paper-dim px-2 py-2">
                         {section.items.map((item) => (
                           <li key={item.label}>
                             <a
@@ -95,7 +98,7 @@ export default function RootLayout({
                           </li>
                         ))}
                       </ul>
-                    </section>
+                    </details>
                   ))}
                 </div>
               </div>
