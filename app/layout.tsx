@@ -33,6 +33,12 @@ const clinicalLibrary = [
     ],
   },
   {
+    heading: "Pulmonology",
+    items: [
+      { label: "COPD assessment", href: "https://cops-assessment.vercel.app/" },
+    ],
+  },
+  {
     heading: "ICU",
     items: [
       { label: "Infusion Drug dose calculator", href: "https://icu-drugs-clu.vercel.app/" },
