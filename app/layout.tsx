@@ -56,18 +56,18 @@ export default function RootLayout({
       <body>
         <div className="min-h-screen flex flex-col">
           <header className="border-b border-paper-dim bg-white/70 backdrop-blur sticky top-0 z-20">
-            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
-                <img src="/emc-header.jpg" alt="EMC Easy My Care" className="h-10 w-[112px] sm:h-12 sm:w-[138px] shrink-0 object-contain object-left" />
-                <span className="flex min-w-0 flex-col justify-center leading-none">
-                  <span className="font-serif text-lg sm:text-2xl font-semibold tracking-tight text-teal-700 whitespace-nowrap">Mediround</span>
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-3">
+              <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
+                <img src="/emc-header.jpg" alt="EMC Easy My Care" className="block h-[44px] w-[122px] sm:h-[52px] sm:w-[144px] shrink-0 object-contain" />
+                <span className="flex shrink-0 flex-col justify-center leading-none">
+                  <span className="font-serif text-xl sm:text-2xl font-semibold tracking-tight text-teal-700 whitespace-nowrap">Mediround</span>
                   <span className="mt-1 text-[8px] sm:text-[10px] uppercase tracking-[0.18em] text-paper-ink/50 whitespace-nowrap">by EMC</span>
                 </span>
               </Link>
-              <nav className="flex items-center gap-1 text-sm font-medium">
-                <Link href="/register" className="px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Register</Link>
-                <Link href="/patients" className="px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Patients</Link>
-                <Link href="/ask-ai" className="px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Ask AI</Link>
+              <nav className="flex min-w-0 items-center justify-end gap-0 sm:gap-1 text-xs sm:text-sm font-medium">
+                <Link href="/register" className="hidden sm:inline-flex px-2 lg:px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Register</Link>
+                <Link href="/patients" className="hidden md:inline-flex px-2 lg:px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700">Patients</Link>
+                <Link href="/ask-ai" className="px-2 lg:px-3 py-1.5 rounded-md hover:bg-teal-50 text-teal-700 whitespace-nowrap">Ask AI</Link>
               </nav>
             </div>
           </header>
