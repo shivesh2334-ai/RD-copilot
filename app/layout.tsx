@@ -24,6 +24,7 @@ const clinicalLibrary = [
       { label: "Acute coronary syndrome", href: "https://acs-copilot.vercel.app/" },
       { label: "Perioperative risk assessment", href: "https://periop-risk-assessment.vercel.app/" },
       { label: "Ventricular tachycardia origin", href: "https://va-origin-lab.vercel.app/" },
+      { label: "Ventricular Tachycardia", href: "https://wide-qrs-tachycardia.vercel.app/" },
       { label: "Atrial fibrillation advisor", href: "https://af-advisor.vercel.app/" },
       { label: "Pacemaker and device care", href: "https://pacemaker-care.vercel.app/" },
       { label: "Lifestyle guide in CVD", href: "https://cardio-lifestyle-guide.vercel.app/" },
