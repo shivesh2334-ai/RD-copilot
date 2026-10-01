@@ -15,6 +15,7 @@ const clinicalLibrary = [
       { label: "Sepsis", href: "https://sepsis-eight.vercel.app/" },
       { label: "Sexually Transmitted Infections", href: "https://sti-clinical-workbench.vercel.app/" },
       { label: "Diabetes in admitted patients", href: "https://inpatient-diabetes-care.vercel.app/" },
+      { label: "Diabetes pharma treatment", href: "https://ada-pharmacy-diabeties.vercel.app/" },
       { label: "Hypertension in Emergency", href: "https://hypertension-er.vercel.app/" },
     ],
   },
