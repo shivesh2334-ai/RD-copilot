@@ -28,6 +28,7 @@ const clinicalLibrary = [
       { label: "Ventricular Tachycardia", href: "https://wide-qrs-tachycardia.vercel.app/" },
       { label: "Atrial fibrillation advisor", href: "https://af-advisor.vercel.app/" },
       { label: "Pacemaker and device care", href: "https://pacemaker-care.vercel.app/" },
+      { label: "Cardiac devices", href: "https://cardiac-device-guide.vercel.app/" },
       { label: "Lifestyle guide in CVD", href: "https://cardio-lifestyle-guide.vercel.app/" },
       { label: "Warfarin guide", href: "https://warfarin-guide.vercel.app/" },
       { label: "HFpEF", href: "https://hfpef-clu.vercel.app/" },
