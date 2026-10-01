@@ -36,7 +36,7 @@ const clinicalLibrary = [
   {
     heading: "Emergency medicine",
     items: [
-      { label: "ECG in ER", href: "https://aistudio.google.com/apps/bb34b83b-2751-496a-b910-f6050b9182cc?showPreview=true" },
+      { label: "ECG in ER", href: "https://cardioguide-emergency-ecg-assessment-knowledge-ba.ai.studio/" },
     ],
   },
   {
