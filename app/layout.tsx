@@ -54,7 +54,7 @@ const clinicalLibrary = [
       { label: "Infusion Drug dose calculator", href: "https://icu-drugs-clu.vercel.app/" },
       { label: "ABG (Arterial Blood Gas)", href: "https://abg-interpreter-blue.vercel.app/" },
       { label: "Cardiogenic shock", href: "https://inotropes-ds.vercel.app/" },
-      { label: "IV Fluids Guide", href: "https://aistudio.google.com/apps/903e74d7-2c7f-4c66-b966-1ce58fd1766a?showPreview=true" },
+      { label: "IV Fluids Guide", href: "https://iv-fluid-clinical-guide.ai.studio/" },
     ],
   },
   {
