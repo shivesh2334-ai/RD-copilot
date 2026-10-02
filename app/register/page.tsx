@@ -81,9 +81,17 @@ export default function RegisterPage() {
     setError(null);
     setParsingKey(key);
     try {
+      const db = await ensureStorageSession();
+      const { data: sessionData } = await db.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Authentication unavailable.");
       const form = new FormData();
       form.append("file", file);
-      const response = await fetch("/api/parse-patient", { method: "POST", body: form });
+      const response = await fetch("/api/parse-patient", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: form,
+      });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not parse this file.");
       const patient = data.patient as Partial<DraftPatient>;
