@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authorizeApi } from "@/lib/apiSecurity";
 
 // Points at your existing MedGemma deployment (Hugging Face Space or similar).
 // Set MEDGEMMA_ENDPOINT and, if the Space requires it, MEDGEMMA_API_KEY in env.
@@ -6,8 +7,14 @@ const MEDGEMMA_ENDPOINT = process.env.MEDGEMMA_ENDPOINT;
 const MEDGEMMA_API_KEY = process.env.MEDGEMMA_API_KEY;
 
 export async function POST(req: NextRequest) {
+  const denied = await authorizeApi(req, 12);
+  if (denied) return denied;
+
   const body = await req.json();
   const { notes, plan, patient } = body;
+  if (typeof notes !== "string" || notes.length > 16000) {
+    return NextResponse.json({ error: "Invalid or oversized clinical notes." }, { status: 400 });
+  }
 
   if (!MEDGEMMA_ENDPOINT) {
     return NextResponse.json(
