@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authorizeApi } from "@/lib/apiSecurity";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const MODEL = process.env.ASK_AI_MODEL || "claude-sonnet-4-6";
 
 export async function POST(req: NextRequest) {
+  const denied = await authorizeApi(req, 20);
+  if (denied) return denied;
+
   const { question } = await req.json();
 
-  if (!question || typeof question !== "string") {
+  if (!question || typeof question !== "string" || question.length > 8000) {
     return NextResponse.json({ answer: "No question received." }, { status: 400 });
   }
 
