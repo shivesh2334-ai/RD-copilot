@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authorizeApi } from "@/lib/apiSecurity";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const MODEL = process.env.ASK_AI_MODEL || "claude-sonnet-4-6";
@@ -13,6 +14,9 @@ function extractJson(text: string) {
 }
 
 export async function POST(req: NextRequest) {
+  const denied = await authorizeApi(req, 8);
+  if (denied) return denied;
+
   if (!ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: "ANTHROPIC_API_KEY is not configured." }, { status: 503 });
   }
