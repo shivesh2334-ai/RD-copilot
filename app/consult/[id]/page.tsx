@@ -102,9 +102,13 @@ export default function ConsultPage() {
     if (!notes.trim()) return;
     setAnalyzing(true);
     try {
+      const db = await ensureStorageSession();
+      const { data: sessionData } = await db.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Authentication unavailable.");
       const res = await fetch("/api/medgemma", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           notes,
           plan: { treatment, investigation, comments },
