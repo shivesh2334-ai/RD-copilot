@@ -3,6 +3,7 @@
 import { useState } from "react";
 import MicButton from "@/components/MicButton";
 import AiFeedback from "@/components/AiFeedback";
+import { ensureStorageSession } from "@/lib/supabase";
 
 interface Turn {
   id: string;
@@ -21,9 +22,13 @@ export default function AskAiPage() {
     setAsking(true);
     setQuestion("");
     try {
+      const db = await ensureStorageSession();
+      const { data: sessionData } = await db.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Authentication unavailable.");
       const res = await fetch("/api/ask-ai", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ question: q }),
       });
       const data = await res.json();
