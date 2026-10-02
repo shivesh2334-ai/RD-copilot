@@ -32,6 +32,7 @@ const clinicalLibrary = [
       { label: "Lifestyle guide in CVD", href: "https://cardio-lifestyle-guide.vercel.app/" },
       { label: "Warfarin guide", href: "https://warfarin-guide.vercel.app/" },
       { label: "HFpEF", href: "https://hfpef-clu.vercel.app/" },
+      { label: "Heart failure", href: "https://hf-guideline.vercel.app/" },
       { label: "Hypertension assessment in ER", href: "https://hypertensive-emergency.ai.studio/" },
     ],
   },
