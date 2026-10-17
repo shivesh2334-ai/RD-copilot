@@ -26,6 +26,7 @@ const clinicalLibrary = [
       { label: "Perioperative risk assessment", href: "https://periop-risk-assessment.vercel.app/" },
       { label: "Ventricular tachycardia origin", href: "https://va-origin-lab.vercel.app/" },
       { label: "Ventricular Tachycardia", href: "https://wide-qrs-tachycardia.vercel.app/" },
+      { label: "Tachycardia & Holter Hub", href: "https://tachy-hub.vercel.app/" },
       { label: "Atrial fibrillation advisor", href: "https://af-advisor.vercel.app/" },
       { label: "Pacemaker and device care", href: "https://pacemaker-care.vercel.app/" },
       { label: "Cardiac devices", href: "https://cardiac-device-guide.vercel.app/" },
