@@ -12,6 +12,7 @@ const clinicalLibrary = [
     heading: "Primary Care hub",
     items: [
       { label: "Fever guide", href: "https://fever-clinical-guide.vercel.app/" },
+      { label: "Headache guide", href: "https://headache-assessment-management.vercel.app/" },
     ],
   },
   {
