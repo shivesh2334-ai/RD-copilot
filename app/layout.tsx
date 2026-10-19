@@ -9,6 +9,10 @@ export const metadata: Metadata = {
 
 const clinicalLibrary = [
   {
+    heading: "Primary Care hub",
+    items: [],
+  },
+  {
     heading: "Internal medicine",
     items: [
       { label: "Antibiotics guide", href: "https://antibiotics-guid-clay.vercel.app/" },
