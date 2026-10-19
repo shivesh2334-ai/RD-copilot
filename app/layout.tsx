@@ -62,6 +62,7 @@ const clinicalLibrary = [
     heading: "iLearn",
     items: [
       { label: "ECG", href: "https://ecg-vercel-xwho.vercel.app/" },
+      { label: "C-XRAY", href: "https://cxray-learning.vercel.app/" },
       { label: "Strain echo", href: "https://strain-echo-master.vercel.app/" },
       { label: "Volume assessment", href: "https://volume-overload-guide-1.vercel.app/" },
     ],
