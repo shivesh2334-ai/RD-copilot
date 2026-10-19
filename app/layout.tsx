@@ -14,6 +14,7 @@ const clinicalLibrary = [
     items: [
       { label: "Fever guide", href: "https://fever-clinical-guide.vercel.app/" },
       { label: "Headache guide", href: "https://headache-assessment-management.vercel.app/" },
+      { label: "Pain management", href: "https://pain-management-advisor.vercel.app/" },
     ],
   },
   {
