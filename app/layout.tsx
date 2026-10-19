@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   description: "Register patients, consult, and get AI-assisted notes on rounds.",
 };
 
+// Sidebar clinical library: keep Primary Care hub entries deployed from current main.
 const clinicalLibrary = [
   {
     heading: "Primary Care hub",
