@@ -17,6 +17,7 @@ const clinicalLibrary = [
       { label: "Pain management", href: "https://pain-management-advisor.vercel.app/" },
       { label: "Health screening advisor", href: "https://health-screening-advisor-india.vercel.app/" },
       { label: "Vertigo/Syncope", href: "https://cardinal-manifestations-assistant.vercel.app/" },
+      { label: "Eye", href: "https://eye-disease-assessment.vercel.app/" },
     ],
   },
   {
