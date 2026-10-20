@@ -20,6 +20,7 @@ const clinicalLibrary = [
       { label: "Eye", href: "https://eye-disease-assessment.vercel.app/" },
       { label: "Sore throat, sinus, Earache", href: "https://upper-respiratory-clinical-guide.vercel.app/" },
       { label: "Cough", href: "https://cough-clinical-guide.vercel.app/" },
+      { label: "Palpitation", href: "https://palpitation-hazel.vercel.app/" },
     ],
   },
   {
