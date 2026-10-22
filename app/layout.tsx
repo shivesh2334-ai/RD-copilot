@@ -25,6 +25,7 @@ const clinicalLibrary = [
       { label: "Anemia", href: "https://anemia-clinical-companion.vercel.app/" },
       { label: "Hyperthyroid", href: "https://hyperthyroidism-assessment.vercel.app/" },
       { label: "Gastroenterology", href: "https://gastro-navy-tau.vercel.app/" },
+      { label: "Rheumatoid Arthritis", href: "https://rheumatoid-arthritis.vercel.app/" },
       { label: "Skin (common conditions)", href: "https://skin-conditions-assistant.vercel.app/" },
       { label: "Hypothyroid", href: "https://hypothyroidism-clinical-guide.vercel.app/" },
     ],
