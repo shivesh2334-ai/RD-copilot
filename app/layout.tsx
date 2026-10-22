@@ -23,6 +23,7 @@ const clinicalLibrary = [
       { label: "Palpitation", href: "https://palpitation-hazel.vercel.app/" },
       { label: "Jaundice", href: "https://jaundice-zeta.vercel.app/" },
       { label: "Anemia", href: "https://anemia-clinical-companion.vercel.app/" },
+      { label: "Hyperthyroid", href: "https://hyperthyroidism-assessment.vercel.app/" },
       { label: "Skin (common conditions)", href: "https://skin-conditions-assistant.vercel.app/" },
       { label: "Hypothyroid", href: "https://hypothyroidism-clinical-guide.vercel.app/" },
     ],
