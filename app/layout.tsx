@@ -28,6 +28,7 @@ const clinicalLibrary = [
       { label: "Rheumatoid Arthritis", href: "https://rheumatoid-arthritis.vercel.app/" },
       { label: "Osteoarthritis", href: "https://oa-decision-support-three.vercel.app/" },
       { label: "Fibromyalgia", href: "https://fibromyalgia-primary-care.vercel.app/" },
+      { label: "Piles/Haemorrhoids/fissure", href: "https://anorectal-disorders-assistant.vercel.app/" },
       { label: "Skin (common conditions)", href: "https://skin-conditions-assistant.vercel.app/" },
       { label: "Hypothyroid", href: "https://hypothyroidism-clinical-guide.vercel.app/" },
     ],
