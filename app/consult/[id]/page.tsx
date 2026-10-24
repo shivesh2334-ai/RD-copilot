@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ensureStorageSession } from "@/lib/supabase";
 import MicButton from "@/components/MicButton";
+import ConsultAgent from "@/components/ConsultAgent";
 import AiFeedback from "@/components/AiFeedback";
 import type { Patient, Consult } from "@/lib/types";
 
@@ -15,6 +16,7 @@ export default function ConsultPage() {
 
   const [patient, setPatient] = useState<Patient | null>(null);
   const [consultId, setConsultId] = useState<string | null>(null);
+  const [agentVisit, setAgentVisit] = useState(0);
   const [notes, setNotes] = useState("");
   const [treatment, setTreatment] = useState("");
   const [investigation, setInvestigation] = useState("");
@@ -26,6 +28,7 @@ export default function ConsultPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const startNewVisit = () => {
+    setAgentVisit(v => v + 1);
     setConsultId(null);
     setNotes("");
     setTreatment("");
@@ -173,6 +176,8 @@ export default function ConsultPage() {
           </button>
         )}
       </div>
+
+      <ConsultAgent key={`${patientId}:${agentVisit}`} age={patient.age} sex={patient.sex} notes={notes} onAccept={text => setNotes(v => `${v}\n\n${text}`.trim())} />
 
       <section className="card p-4 space-y-2">
         <div className="flex items-center justify-between">
