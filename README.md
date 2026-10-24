@@ -119,3 +119,14 @@ written to Supabase or another app storage bucket. Always verify extracted demog
 AI outputs (MedGemma analysis and Ask AI answers) are decision support, not a diagnosis — the
 UI keeps them visually separate from the resident's own notes and every output carries a
 feedback control so misfires get tracked.
+
+
+## Consultation agent (review version)
+
+Open a registered patient's consultation and use **Consultation agent**. Enter or dictate concerns, submit follow-up answers, open suggested modules and paste their results back. The sidebar and agent share `lib/clinicalLibrary.ts`. Tool forms are not filled automatically and their clinical content is not retrieved by this version.
+
+Uses the existing `ANTHROPIC_API_KEY` and optional `ASK_AI_MODEL` server configuration, existing authenticated API guard and rate limiting. The clinician explicitly authorizes AI processing before a request. Patient name/ID/contact fields are not sent as structured fields; remove identifiers from notes and dialogue. No new database schema is required. Dialogue is temporary; only a reviewed draft explicitly added to notes is included in the existing Save workflow. New visits reset the dialogue. Editing notes requires resetting the agent so stale context is not reused.
+
+Example: 56-year-old man requesting a check-up → Health screening advisor → clarify symptoms, history/risk factors, measurements, previous screening and vaccinations → clinician verifies tool output and accepts a draft. Missing inputs keep the response in question mode. Urgent output is prominently displayed. These are model instructions plus output validation, not a validated clinical triage engine.
+
+Validation: `npm run build` and `node --test tests/consult-agent.cjs`. Before clinical deployment, verify authenticated end-to-end operation with configured AI credentials and evaluate representative screening, symptom, emergency, negation and contradictory-input cases. No live AI clinical evaluation was performed in the development environment.
