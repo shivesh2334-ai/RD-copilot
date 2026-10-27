@@ -72,6 +72,7 @@ export const clinicalLibrary = [
       { label: "ABG (Arterial Blood Gas)", href: "https://abg-interpreter-blue.vercel.app/" },
       { label: "Cardiogenic shock", href: "https://inotropes-ds.vercel.app/" },
       { label: "IV Fluids Guide", href: "https://iv-fluid-clinical-guide.ai.studio/" },
+      { label: "Poisoning", href: "https://poisoning-zeta.vercel.app/" },
     ],
   },
   {
