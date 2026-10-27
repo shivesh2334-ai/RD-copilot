@@ -66,6 +66,12 @@ export const clinicalLibrary = [
     ],
   },
   {
+    heading: "Neurology",
+    items: [
+      { label: "Stroke localiser and treatment", href: "https://stroke-localizer-virid.vercel.app/" },
+    ],
+  },
+  {
     heading: "ICU",
     items: [
       { label: "Infusion Drug dose calculator", href: "https://icu-drugs-clu.vercel.app/" },
