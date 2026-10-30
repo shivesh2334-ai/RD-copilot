@@ -6,6 +6,7 @@ import { ensureStorageSession } from "@/lib/supabase";
 import { useVoiceDictation } from "@/lib/useVoiceDictation";
 import { agentModules } from "@/lib/consultAgent";
 import AiFeedback from "@/components/AiFeedback";
+import ModuleSearch from "@/components/ModuleSearch";
 import {
   CONSULT_UPDATED_EVENT,
   matchPatient,
@@ -58,6 +59,7 @@ export default function VoiceAgent() {
   const contextPatientId = pathname?.match(/^\/consult\/([^/]+)/)?.[1] ?? null;
 
   const [open, setOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"agent" | "search">("agent");
   const [transcript, setTranscript] = useState("");
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -273,6 +275,12 @@ export default function VoiceAgent() {
               <button type="button" onClick={() => setOpen(false)} className="text-paper-ink/50 hover:underline">Close</button>
             </div>
           </div>
+          <nav aria-label="Voice agent views" className="flex gap-2 border-b border-paper-dim pb-2">
+            <button type="button" aria-pressed={activeTab === "agent"} className={activeTab === "agent" ? "btn-primary text-xs" : "btn-secondary text-xs"} onClick={() => setActiveTab("agent")}>Voice agent</button>
+            <button type="button" aria-pressed={activeTab === "search"} className={activeTab === "search" ? "btn-primary text-xs" : "btn-secondary text-xs"} onClick={() => { if (listening) stop(); setActiveTab("search"); }}>Search</button>
+          </nav>
+          <div hidden={activeTab !== "search"}><ModuleSearch /></div>
+          <div hidden={activeTab !== "agent"} className="space-y-3">
           <p className="text-xs text-paper-ink/60">
             Speak a patient and what you need — e.g. “Ramesh Kumar, 54, male, chest pain for two days, please analyse.” It registers
             the patient if new, records findings into empty boxes, analyses, and shows the apps it used.
@@ -393,6 +401,7 @@ export default function VoiceAgent() {
               </div>
             </div>
           )}
+          </div>
         </section>
       )}
 
