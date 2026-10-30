@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ensureStorageSession } from "@/lib/supabase";
 import MicButton from "@/components/MicButton";
 import ConsultAgent from "@/components/ConsultAgent";
 import AiFeedback from "@/components/AiFeedback";
 import type { Patient, Consult } from "@/lib/types";
+import { CONSULT_UPDATED_EVENT } from "@/lib/voiceAgent";
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
@@ -38,42 +39,54 @@ export default function ConsultPage() {
     setSaveStatus("idle");
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const db = await ensureStorageSession();
-        const { data: p, error: patientError } = await db
-          .from("patients")
-          .select("*")
-          .eq("id", patientId)
-          .single();
-        if (patientError) throw patientError;
-        setPatient(p);
+  const load = useCallback(async () => {
+    try {
+      const db = await ensureStorageSession();
+      const { data: p, error: patientError } = await db
+        .from("patients")
+        .select("*")
+        .eq("id", patientId)
+        .single();
+      if (patientError) throw patientError;
+      setPatient(p);
 
-        const { data: c, error: consultError } = await db
-          .from("consults")
-          .select("*")
-          .eq("patient_id", patientId)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (consultError) throw consultError;
+      const { data: c, error: consultError } = await db
+        .from("consults")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (consultError) throw consultError;
 
-        if (c) {
-          setConsultId(c.id);
-          setNotes(c.notes ?? "");
-          setTreatment(c.plan_treatment ?? "");
-          setInvestigation(c.plan_investigation ?? "");
-          setComments(c.plan_comments ?? "");
-          setAiSummary(c.ai_summary ?? null);
-        }
-      } catch (error) {
-        setLoadError(error instanceof Error ? error.message : "Storage connection failed.");
-      } finally {
-        setLoading(false);
+      if (c) {
+        setConsultId(c.id);
+        setNotes(c.notes ?? "");
+        setTreatment(c.plan_treatment ?? "");
+        setInvestigation(c.plan_investigation ?? "");
+        setComments(c.plan_comments ?? "");
+        setAiSummary(c.ai_summary ?? null);
       }
-    })();
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : "Storage connection failed.");
+    } finally {
+      setLoading(false);
+    }
   }, [patientId]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  // The floating voice agent saves to the database; reload so the boxes show what it recorded.
+  useEffect(() => {
+    const onUpdated = (event: Event) => {
+      const detail = (event as CustomEvent<{ patientId?: string }>).detail;
+      if (detail?.patientId === patientId) load();
+    };
+    window.addEventListener(CONSULT_UPDATED_EVENT, onUpdated);
+    return () => window.removeEventListener(CONSULT_UPDATED_EVENT, onUpdated);
+  }, [patientId, load]);
 
   const save = async () => {
     setSaveStatus("saving");

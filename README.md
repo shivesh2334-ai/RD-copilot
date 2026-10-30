@@ -130,3 +130,18 @@ Uses the existing `ANTHROPIC_API_KEY` and optional `ASK_AI_MODEL` server configu
 Example: 56-year-old man requesting a check-up → Health screening advisor → clarify symptoms, history/risk factors, measurements, previous screening and vaccinations → clinician verifies tool output and accepts a draft. Missing inputs keep the response in question mode. Urgent output is prominently displayed. These are model instructions plus output validation, not a validated clinical triage engine.
 
 Validation: `npm run build` and `node --test tests/consult-agent.cjs`. Before clinical deployment, verify authenticated end-to-end operation with configured AI credentials and evaluate representative screening, symptom, emergency, negation and contradictory-input cases. No live AI clinical evaluation was performed in the development environment.
+
+## Floating voice agent
+
+A floating **Voice agent** tab (bottom-right on every page) opens only when the doctor clicks it. Record or type a request such as "Ramesh Kumar, 54, male, chest pain for two days, please analyse", then press **Process request**.
+
+Workflow (`components/VoiceAgent.tsx`, `app/api/voice-agent/route.ts`, `lib/voiceAgent.ts`):
+
+1. Dictation is parsed by Claude into registration fields and the consult boxes (Notes, Treatment, Investigation, Comments). Missing values stay empty — sex is never guessed.
+2. **Registration:** if the name already matches a registered patient (same name, compatible age/mobile) registration is skipped. Similar names or a different age ask the doctor to choose "use this patient" or "register as new". If name, age or sex is missing the agent asks and keeps the transcript.
+3. **Clinical boxes:** only empty boxes are filled; boxes that already hold text are left untouched and reported, and the agent proceeds to analysis.
+4. **Analysis:** Claude returns result, final analysis, provisional opinion, next steps and the most relevant clinical-library modules; MedGemma is added when `MEDGEMMA_ENDPOINT` works. Only age, sex and clinical text are sent for analysis (no name/contact).
+5. The app opens the patient's consult workspace and refreshes it. External library modules open in a new tab by button (they are separate sites; the agent cannot fill them or read their results).
+6. The panel lists every step and an **Applications used** summary (steps actually executed, plus modules recommended). The analysis can be saved into the consult's AI analysis box.
+
+No schema change and no new environment variables (uses `ANTHROPIC_API_KEY`, `ASK_AI_MODEL`, the existing auth guard and rate limit). Tests: `node --test tests/voice-agent.cjs`. Not yet evaluated with live AI credentials on real dictations.

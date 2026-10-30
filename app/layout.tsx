@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 };
 
 import { clinicalLibrary } from "@/lib/clinicalLibrary";
+import VoiceAgent from "@/components/VoiceAgent";
 
 export default function RootLayout({
   children,
@@ -76,6 +77,7 @@ export default function RootLayout({
             Mediround · by EMC · built for resident workflows · not a substitute for clinical judgement
           </footer>
         </div>
+        <VoiceAgent />
       </body>
     </html>
   );
