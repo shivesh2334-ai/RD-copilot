@@ -3,7 +3,6 @@
 import { ChangeEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ensureStorageSession } from "@/lib/supabase";
-import MicButton from "@/components/MicButton";
 import type { Sex } from "@/lib/types";
 
 interface DraftPatient {
@@ -36,24 +35,6 @@ function emptyRow(): DraftPatient {
   };
 }
 
-// Very light parser for a dictated line like:
-// "Ramesh Kumar, 54, male, mobile 9876543210" — fills in whatever it can find.
-function parseVoiceLine(text: string): Partial<DraftPatient> {
-  const ageMatch = text.match(/\b(\d{1,3})\s*(?:years?|yrs?|y\/o)?\b/);
-  const sexMatch = text.match(/\b(male|female|other)\b/i);
-  const mobileMatch = text.match(/\b(\d{10})\b/);
-  const emailMatch = text.match(/[\w.+-]+@[\w-]+\.[\w.-]+/);
-  const namePart = text.split(",")[0]?.trim();
-
-  return {
-    name: namePart && namePart.length < 60 ? namePart : undefined,
-    age: ageMatch ? ageMatch[1] : undefined,
-    sex: (sexMatch?.[1].toLowerCase() as Sex) || undefined,
-    mobile: mobileMatch ? mobileMatch[1] : undefined,
-    email: emailMatch ? emailMatch[0] : undefined,
-  };
-}
-
 export default function RegisterPage() {
   const router = useRouter();
   const [rows, setRows] = useState<DraftPatient[]>([emptyRow()]);
@@ -69,10 +50,6 @@ export default function RegisterPage() {
   const addRow = () => setRows((prev) => [...prev, emptyRow()]);
   const removeRow = (key: string) =>
     setRows((prev) => (prev.length > 1 ? prev.filter((r) => r.key !== key) : prev));
-
-  const handleVoice = (key: string, text: string) => {
-    updateRow(key, parseVoiceLine(text));
-  };
 
   const parseUpload = async (key: string, event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -154,8 +131,8 @@ export default function RegisterPage() {
         <span className="eyebrow">register</span>
         <h1 className="text-2xl font-semibold mt-1">Register patients</h1>
         <p className="text-sm text-paper-ink/60 mt-1">
-          Add one patient or a whole ward round at once. Speak a row — name, age, sex, and mobile
-          if you have it — and the fields fill themselves in; correct anything that&apos;s off before saving.
+          Add one patient or a whole ward round at once. Enter the details below or parse an image / PDF,
+          then review the fields before saving.
         </p>
       </div>
 
@@ -180,7 +157,6 @@ export default function RegisterPage() {
                 >
                   {parsingKey === row.key ? "Reading…" : "Parse image / PDF"}
                 </button>
-                <MicButton label="Dictate row" onText={(t) => handleVoice(row.key, t)} />
                 {rows.length > 1 && (
                   <button
                     onClick={() => removeRow(row.key)}
