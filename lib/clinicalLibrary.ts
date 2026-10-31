@@ -22,6 +22,7 @@ export const clinicalLibrary = [
       { label: "Piles/Haemorrhoids/fissure", href: "https://anorectal-disorders-assistant.vercel.app/" },
       { label: "Skin (common conditions)", href: "https://skin-conditions-assistant.vercel.app/" },
       { label: "Hypothyroid", href: "https://hypothyroidism-clinical-guide.vercel.app/" },
+      { label: "Clinical Diabetes", href: "https://diabetes-clinical-care.vercel.app/" },
     ],
   },
   {
