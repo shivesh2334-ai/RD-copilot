@@ -24,6 +24,7 @@ export const clinicalLibrary = [
       { label: "Skin (common conditions)", href: "https://skin-conditions-assistant.vercel.app/" },
       { label: "Hypothyroid", href: "https://hypothyroidism-clinical-guide.vercel.app/" },
       { label: "Clinical Diabetes", href: "https://diabetes-clinical-care.vercel.app/" },
+      { label: "Laboratory", href: "https://blood-test-analysis-suite.vercel.app/" },
     ],
   },
   {
