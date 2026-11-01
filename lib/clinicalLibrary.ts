@@ -8,6 +8,7 @@ export const clinicalLibrary = [
       { label: "Pain management", href: "https://pain-management-advisor.vercel.app/" },
       { label: "Health screening advisor", href: "https://health-screening-advisor-india.vercel.app/" },
       { label: "Vertigo/Syncope", href: "https://cardinal-manifestations-assistant.vercel.app/" },
+      { label: "Motion Sickness", href: "https://motion-sickness-clinical-guide.vercel.app/" },
       { label: "Eye", href: "https://eye-disease-assessment.vercel.app/" },
       { label: "Sore throat, sinus, Earache", href: "https://upper-respiratory-clinical-guide.vercel.app/" },
       { label: "Cough", href: "https://cough-clinical-guide.vercel.app/" },
