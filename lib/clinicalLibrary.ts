@@ -26,6 +26,7 @@ export const clinicalLibrary = [
       { label: "Clinical Diabetes", href: "https://diabetes-clinical-care.vercel.app/" },
       { label: "Laboratory", href: "https://blood-test-analysis-suite.vercel.app/" },
       { label: "Preventive health check up", href: "https://preventive-health-checkup.vercel.app/" },
+      { label: "Vitamins", href: "https://vitaguide-blush.vercel.app/" },
     ],
   },
   {
