@@ -93,6 +93,7 @@ export const clinicalLibrary = [
       { label: "C-XRAY", href: "https://cxray-learning.vercel.app/" },
       { label: "Strain echo", href: "https://strain-echo-master.vercel.app/" },
       { label: "Volume assessment", href: "https://volume-overload-guide-1.vercel.app/" },
+      { label: "IABP (Intra-aortic balloon pump)", href: "https://iabp-monitor-analyzer.vercel.app/" },
     ],
   },
 ];
