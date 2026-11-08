@@ -95,6 +95,7 @@ export const clinicalLibrary = [
       { label: "Volume assessment", href: "https://volume-overload-guide-1.vercel.app/" },
       { label: "IABP (Intra-aortic balloon pump)", href: "https://iabp-monitor-analyzer.vercel.app/" },
       { label: "ECG rhythm lab", href: "https://ecg-rhythm-conduction-lab.vercel.app/" },
+      { label: "ECG hub", href: "https://rhythm-conduction-atlas.drshivesh.chatgpt.site/" },
     ],
   },
 ];
