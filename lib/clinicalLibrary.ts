@@ -94,7 +94,7 @@ export const clinicalLibrary = [
       { label: "Strain echo", href: "https://strain-echo-master.vercel.app/" },
       { label: "Volume assessment", href: "https://volume-overload-guide-1.vercel.app/" },
       { label: "IABP (Intra-aortic balloon pump)", href: "https://iabp-monitor-analyzer.vercel.app/" },
-      { label: "ECG rhythm lab", href: "https://rhythm-conduction-atlas.drshivesh.chatgpt.site/" },
+      { label: "ECG rhythm lab", href: "https://rhythm-conduction-atlas.vercel.app/" },
       { label: "ECG hub", href: "https://ecg-rhythm-conduction-lab.vercel.app/" },
     ],
   },
