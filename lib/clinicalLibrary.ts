@@ -98,4 +98,10 @@ export const clinicalLibrary = [
       { label: "ECG hub", href: "https://ecg-rhythm-conduction-lab.vercel.app/" },
     ],
   },
+  {
+    heading: "Practice development hub",
+    items: [
+      { label: "Self assessment", href: "https://physician-selfassessment-vercel.vercel.app/" },
+    ],
+  },
 ];
