@@ -27,6 +27,7 @@ export const clinicalLibrary = [
       { label: "Laboratory", href: "https://blood-test-analysis-suite.vercel.app/" },
       { label: "Preventive health check up", href: "https://preventive-health-checkup.vercel.app/" },
       { label: "Vitamins", href: "https://vitaguide-blush.vercel.app/" },
+      { label: "Obesity", href: "https://obesity-sooty.vercel.app/" },
     ],
   },
   {
