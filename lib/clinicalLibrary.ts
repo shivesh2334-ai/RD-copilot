@@ -57,6 +57,7 @@ export const clinicalLibrary = [
       { label: "HFpEF", href: "https://hfpef-clu.vercel.app/" },
       { label: "Heart failure", href: "https://hf-guideline.vercel.app/" },
       { label: "Hypertension assessment in ER", href: "https://hypertensive-emergency.ai.studio/" },
+      { label: "Cardio-oncology", href: "https://cardio-oncology-seven.vercel.app/" },
     ],
   },
   {
