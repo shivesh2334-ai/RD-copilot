@@ -58,6 +58,7 @@ export const clinicalLibrary = [
       { label: "Heart failure", href: "https://hf-guideline.vercel.app/" },
       { label: "Hypertension assessment in ER", href: "https://hypertensive-emergency.ai.studio/" },
       { label: "Cardio-oncology", href: "https://cardio-oncology-seven.vercel.app/" },
+      { label: "Pacemaker interrogation", href: "https://pacemaker-interrogation.ai.studio/" },
     ],
   },
   {
