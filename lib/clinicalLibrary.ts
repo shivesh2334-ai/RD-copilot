@@ -105,6 +105,7 @@ export const clinicalLibrary = [
     heading: "Practice development hub",
     items: [
       { label: "Self assessment", href: "https://physician-selfassessment-vercel.vercel.app/" },
+      { label: "Peer assessment", href: "https://peer-assessment-eta.vercel.app/" },
     ],
   },
 ];
