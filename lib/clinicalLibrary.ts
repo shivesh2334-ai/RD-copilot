@@ -99,6 +99,7 @@ export const clinicalLibrary = [
       { label: "IABP (Intra-aortic balloon pump)", href: "https://iabp-monitor-analyzer.vercel.app/" },
       { label: "ECG rhythm lab", href: "https://rhythm-conduction-atlas.vercel.app/" },
       { label: "ECG hub", href: "https://ecg-rhythm-conduction-lab.vercel.app/" },
+      { label: "Hypertension special conditions", href: "https://hypertension-special-conditions.vercel.app/" },
     ],
   },
   {
