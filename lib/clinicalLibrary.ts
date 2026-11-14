@@ -29,6 +29,7 @@ export const clinicalLibrary = [
       { label: "Vitamins", href: "https://vitaguide-blush.vercel.app/" },
       { label: "Obesity", href: "https://obesity-sooty.vercel.app/" },
       { label: "Diet in Diabetes", href: "https://diabetes-diet-eight.vercel.app/" },
+      { label: "Diet in CVD", href: "https://diet-cvd.vercel.app/" },
     ],
   },
   {
