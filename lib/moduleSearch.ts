@@ -254,20 +254,26 @@ const keywords: Record<string, [string, string, string]> = {
     "POCUS ultrasound VTI IVC volume assessment"
   ]
 };
-const normalize = (text: string) => text.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+export const normalize = (text: string) => text.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 const ignored = new Set(["a", "an", "the", "for", "of", "in", "and", "or", "to", "find", "search", "show", "me", "please", "module", "modules", "topic", "topics", "condition", "conditions", "disease", "diseases", "treatment", "treatments", "investigation", "investigations", "test", "tests"]);
 export const searchCategories = Array.from(new Set(agentModules.map(m => m.category)));
-export function searchModules(query: string, scope: SearchScope = "all", category = "") {
+export type ContentIndex = Record<string, { text: string; status: string; indexedAt?: string }>;
+export function searchModules(query: string, scope: SearchScope = "all", category = "", content: ContentIndex = {}) {
   const tokens = normalize(query.slice(0, 300)).split(" ").filter(t => t && !ignored.has(t));
   return agentModules.flatMap(module => {
     if (category && module.category !== category) return [];
     const [topics = "", treatment = "", tests = ""] = keywords[module.id] ?? [];
     const detail = scope === "topics" ? topics : scope === "treatment" ? treatment : scope === "tests" ? tests : `${topics} ${treatment} ${tests}`;
     const title = normalize(`${module.label} ${module.category}`);
-    const words = normalize(`${title} ${detail}`).split(" ");
+    const entry = content[module.href];
+    const body = scope === "all" ? entry?.text || "" : "";
+    const words = normalize(`${title} ${detail} ${body}`).split(" ");
     // AND matching avoids unrelated results for multiword queries. Prefixes support plurals.
     if (!tokens.every(t => words.some(w => w === t || (t.length > 3 && w.startsWith(t))))) return [];
     const score = tokens.reduce((n, t) => n + (title.includes(t) ? 3 : 1), 0);
-    return [{ ...module, topics, treatment, tests, score }];
+    const first = tokens.find(t => normalize(body).includes(t));
+    const offset = first ? body.toLowerCase().indexOf(first) : -1;
+    const excerpt = offset >= 0 ? body.slice(Math.max(0, offset - 90), offset + 220) : "";
+    return [{ ...module, topics, treatment, tests, score, excerpt, indexedAt: entry?.indexedAt, contentStatus: entry?.status || "unavailable" }];
   }).sort((a, b) => b.score - a.score || a.label.localeCompare(b.label));
 }

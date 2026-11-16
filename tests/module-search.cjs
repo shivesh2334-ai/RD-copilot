@@ -37,3 +37,21 @@ test('handles case, punctuation, empty and unmatched queries', () => {
   assert.equal(searchModules('<script>alert(1)</script>').length, 0);
   assert.equal(searchModules('   ').length, agentModules.length);
 });
+test('searches application content beyond curated keywords with excerpts and filters', () => {
+  const app = agentModules[0];
+  const index = { [app.href]: { text: 'Diagnosis of unusualcondition. Treatment with unusualmedicine.', status: 'indexed' } };
+  const result = searchModules('unusualcondition', 'all', '', index);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].href, app.href);
+  assert.match(result[0].excerpt, /unusualcondition/);
+  assert.equal(searchModules('unusualmedicine', 'all', '', index).length, 1);
+  assert.equal(searchModules('unusualcondition missingword', 'all', '', index).length, 0);
+  assert.equal(searchModules('unusualcondition', 'tests', '', index).length, 0);
+  assert.equal(searchModules('unusualcondition', 'all', 'nonexistent', index).length, 0);
+});
+test('committed public index covers all catalog applications and content searches', () => {
+  const index = require('../public/clinical-content-index.json').apps;
+  for (const app of agentModules) assert.ok(index[app.href], `Missing coverage record: ${app.label}`);
+  assert.ok(searchModules('uveitis', 'all', '', index).some(m => m.label === 'Eye' && m.excerpt));
+  assert.ok(searchModules('trastuzumab', 'all', '', index).some(m => m.label === 'Cardio-oncology' && m.excerpt));
+});

@@ -145,3 +145,19 @@ Workflow (`components/VoiceAgent.tsx`, `app/api/voice-agent/route.ts`, `lib/voic
 6. The panel lists every step and an **Applications used** summary (steps actually executed, plus modules recommended). The analysis can be saved into the consult's AI analysis box.
 
 No schema change and no new environment variables (uses `ANTHROPIC_API_KEY`, `ASK_AI_MODEL`, the existing auth guard and rate limit). Tests: `node --test tests/voice-agent.cjs`. Not yet evaluated with live AI credentials on real dictations.
+
+### Agent application-content search
+
+Agent → Search → All content searches application names, curated keywords and a
+public-content snapshot, returning matching applications and text excerpts.
+`npm run index:apps` refreshes `public/clinical-content-index.json` from the
+clinical library URLs and same-origin JavaScript display strings (including
+content behind tabs). The weekly GitHub workflow refreshes the committed snapshot;
+manual workflow dispatch is also supported. No patient data or LLM is used.
+
+Coverage is explicitly indexed / partial / stale / unavailable. The crawler is
+bounded to 35 same-origin bundles per app, a 60-second bundle-discovery budget, 3 MB per resource and 12-second fetches;
+it does not execute apps, traverse every route, read protected content, or index
+text inside images/PDFs. Runtime-only/remote data and some lazy-loaded content may
+be absent. Failed refreshes retain previous content. Scoped treatment/test/topic
+filters use curated fields; All content searches every indexed keyword.
