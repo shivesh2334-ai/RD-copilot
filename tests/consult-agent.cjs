@@ -5,7 +5,7 @@ const { tmpdir } = require('node:os');
 const { join, resolve } = require('node:path');
 const { execFileSync } = require('node:child_process');
 const output = mkdtempSync(join(tmpdir(), 'mediround-agent-'));
-execFileSync(process.execPath, [resolve('node_modules/typescript/bin/tsc'), 'lib/consultAgent.ts', 'lib/clinicalLibrary.ts', '--module', 'commonjs', '--target', 'ES2019', '--skipLibCheck', '--outDir', output]);
+execFileSync(process.execPath, [resolve('node_modules/typescript/bin/tsc'), 'lib/consultAgent.ts', 'lib/clinicalLibrary.ts', '--module', 'commonjs', '--target', 'ES2019', '--skipLibCheck', '--resolveJsonModule', '--esModuleInterop', '--outDir', output]);
 const { validateReply, agentModules } = require(join(output, 'consultAgent.js'));
 process.on('exit', () => rmSync(output, { recursive: true, force: true }));
 const base = { stage: 'questions', summary: '56-year-old man requesting screening', questions: ['Any current symptoms?'], opinion: 'Assessment pending', moduleIds: ['Health screening advisor'], missingInputs: ['Symptoms'] };

@@ -5,7 +5,7 @@ const { tmpdir } = require('node:os');
 const { join, resolve } = require('node:path');
 const { execFileSync } = require('node:child_process');
 const output = mkdtempSync(join(tmpdir(), 'mediround-search-'));
-execFileSync(process.execPath, [resolve('node_modules/typescript/bin/tsc'), 'lib/moduleSearch.ts', '--module', 'commonjs', '--target', 'ES2019', '--skipLibCheck', '--outDir', output]);
+execFileSync(process.execPath, [resolve('node_modules/typescript/bin/tsc'), 'lib/moduleSearch.ts', '--module', 'commonjs', '--target', 'ES2019', '--skipLibCheck', '--resolveJsonModule', '--esModuleInterop', '--outDir', output]);
 const { searchModules } = require(join(output, 'moduleSearch.js'));
 const { agentModules } = require(join(output, 'consultAgent.js'));
 process.on('exit', () => rmSync(output, { recursive: true, force: true }));

@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   description: "Register patients, consult, and get AI-assisted notes on rounds.",
 };
 
+import { clinicalAppPath } from "@/lib/consultAgent";
 import { clinicalLibrary } from "@/lib/clinicalLibrary";
 import VoiceAgent from "@/components/VoiceAgent";
 
@@ -53,15 +54,13 @@ export default function RootLayout({
                       <ul className="space-y-1 border-t border-paper-dim px-2 py-2">
                         {section.items.map((item) => (
                           <li key={item.label}>
-                            <a
-                              href={item.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <Link
+                              href={clinicalAppPath(item.label)}
+                              prefetch={false}
                               className="block rounded-md px-2.5 py-2 text-sm leading-snug text-paper-ink/75 hover:text-teal-800 hover:bg-teal-50 transition-colors"
                             >
                               {item.label}
-                              <span className="ml-1 text-[10px] text-paper-ink/30" aria-hidden="true">↗</span>
-                            </a>
+                            </Link>
                           </li>
                         ))}
                       </ul>

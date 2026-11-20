@@ -1,3 +1,8 @@
+const clinicalLibrary = require("./lib/clinicalLibrary.json");
+const appOrigins = [...new Set(clinicalLibrary.flatMap(section =>
+  section.items.map(item => new URL(item.href).origin)
+))];
+
 /** @type {import('next').NextConfig} */
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -11,6 +16,7 @@ const securityHeaders = [
       "default-src 'self'",
       "base-uri 'self'",
       "form-action 'self'",
+      `frame-src ${appOrigins.join(" ")}`,
       "frame-ancestors 'none'",
       "object-src 'none'",
       "img-src 'self' data: blob: https:",
