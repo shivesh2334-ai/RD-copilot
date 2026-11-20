@@ -1,10 +1,6 @@
 /* Public content only. Never fetch patient pages, APIs, credentials or arbitrary URLs. */
 const fs = require('node:fs');
-const ts = require('typescript');
-const vm = require('node:vm');
-const source = ts.transpileModule(fs.readFileSync('lib/clinicalLibrary.ts', 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
-const sandbox = { exports: {} }; vm.runInNewContext(source, sandbox);
-const apps = sandbox.exports.clinicalLibrary.flatMap(s => s.items);
+const apps = require('../lib/clinicalLibrary.json').flatMap(section => section.items);
 const target = 'public/clinical-content-index.json';
 const previous = fs.existsSync(target) ? JSON.parse(fs.readFileSync(target, 'utf8')).apps : {};
 const entries = {};

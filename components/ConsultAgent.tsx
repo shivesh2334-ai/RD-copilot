@@ -1,7 +1,8 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { ensureStorageSession } from "@/lib/supabase";
-import { agentModules, type AgentMessage, type AgentReply } from "@/lib/consultAgent";
+import { clinicalAppPath, agentModules, type AgentMessage, type AgentReply } from "@/lib/consultAgent";
 import MicButton from "./MicButton";
 
 type Props = { age: number; sex: string; notes: string; onAccept: (text: string) => void };
@@ -45,7 +46,7 @@ export default function ConsultAgent({ age, sex, notes, onAccept }: Props) {
       {!!reply.questions.length && <ol className="list-decimal pl-5 text-sm">{reply.questions.map((q, i) => <li key={i}>{q}</li>)}</ol>}
       <p className="text-sm whitespace-pre-wrap">{reply.opinion}</p>
       {!!reply.missingInputs.length && <p className="text-xs">Still needed: {reply.missingInputs.join("; ")}</p>}
-      <div className="flex flex-wrap gap-2">{agentModules.filter(m => reply.moduleIds.includes(m.id)).map(m => <a key={m.id} className="btn-secondary text-sm" href={m.href} target="_blank" rel="noopener noreferrer">Open {m.label} ↗</a>)}</div>
+      <div className="flex flex-wrap gap-2">{agentModules.filter(m => reply.moduleIds.includes(m.id)).map(m => <Link key={m.id} className="btn-secondary text-sm" href={clinicalAppPath(m.label)} prefetch={false}>Open {m.label}</Link>)}</div>
       <button type="button" className="btn-secondary text-sm" disabled={stale || accepted || busy} onClick={() => { onAccept(draft); setAccepted(true); }}>{accepted ? "Added to notes — save consultation to persist" : "Add reviewed draft to notes"}</button>
     </div>}
     {stale && <p role="alert" className="text-sm text-terracotta-600">Consultation notes changed. Reset dialogue before requesting another assessment.</p>}

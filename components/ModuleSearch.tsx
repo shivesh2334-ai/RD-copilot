@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { clinicalAppPath } from "@/lib/consultAgent";
 import { useEffect, useMemo, useState } from "react";
 import { searchCategories, searchModules, type ContentIndex, type SearchScope } from "@/lib/moduleSearch";
 
@@ -47,7 +49,7 @@ export default function ModuleSearch() {
       {results.length === 0 && <p className="text-sm">No matching modules. Try a shorter keyword, abbreviation or another category.</p>}
       <ul className="space-y-2">
         {results.map(m => <li key={m.id} className="rounded-md border border-teal-100 p-3 space-y-1">
-          <a href={m.href} target="_blank" rel="noopener noreferrer" className="font-medium text-sm text-teal-700 underline">{m.label} ↗<span className="sr-only"> (opens in a new tab)</span></a>
+          <Link href={clinicalAppPath(m.label)} prefetch={false} className="font-medium text-sm text-teal-700 underline">{m.label}</Link>
           <p className="text-xs text-paper-ink/55">{m.category} · Content: {m.contentStatus}{m.indexedAt ? ` · Updated ${m.indexedAt.slice(0, 10)}` : ""}</p>
           {m.excerpt && <p className="text-xs">…{m.excerpt}…</p>}
           <p className="text-xs text-paper-ink/60">Keywords: {scope === "tests" ? m.tests : scope === "treatment" ? m.treatment : m.topics || m.label}</p>

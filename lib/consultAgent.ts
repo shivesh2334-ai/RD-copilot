@@ -3,6 +3,10 @@ import { clinicalLibrary } from "./clinicalLibrary";
 export const agentModules = clinicalLibrary.flatMap(section => section.items.map(item => ({
   id: item.label, label: item.label, href: item.href, category: section.heading,
 })));
+export function clinicalAppPath(label: string) {
+  return `/clinical-app?module=${encodeURIComponent(label)}`;
+}
+
 export type AgentMessage = { role: "user" | "assistant"; content: string };
 export type AgentReply = {
   stage: "questions" | "review" | "urgent";

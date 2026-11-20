@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ensureStorageSession } from "@/lib/supabase";
 import { useVoiceDictation } from "@/lib/useVoiceDictation";
-import { agentModules } from "@/lib/consultAgent";
+import { clinicalAppPath, agentModules } from "@/lib/consultAgent";
 import AiFeedback from "@/components/AiFeedback";
 import ModuleSearch from "@/components/ModuleSearch";
 import {
@@ -371,9 +372,9 @@ export default function VoiceAgent() {
               {!!modules.length && (
                 <div className="flex flex-wrap gap-2">
                   {modules.map((m, i) => (
-                    <a key={m.id} href={m.href} target="_blank" rel="noopener noreferrer" className={`${i === 0 ? "btn-primary" : "btn-secondary"} text-xs px-3 py-1.5`}>
-                      Open {m.label} ↗
-                    </a>
+                    <Link key={m.id} href={clinicalAppPath(m.label)} prefetch={false} className={`${i === 0 ? "btn-primary" : "btn-secondary"} text-xs px-3 py-1.5`}>
+                      Open {m.label}
+                    </Link>
                   ))}
                 </div>
               )}
@@ -389,7 +390,7 @@ export default function VoiceAgent() {
                 patientId={outcome.patient?.id}
                 consultId={outcome.consultId ?? undefined}
               />
-              <p className="text-[11px] text-paper-ink/50">Decision support only. Verify against your own clinical judgement; external modules open separately and their results are not read by the agent.</p>
+              <p className="text-[11px] text-paper-ink/50">Decision support only. Verify against your own clinical judgement; the agent uses the information you enter in Mediround.</p>
             </div>
           )}
 
