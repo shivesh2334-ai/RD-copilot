@@ -67,6 +67,7 @@ export const clinicalLibrary = [
     heading: "Emergency medicine",
     items: [
       { label: "ECG in ER", href: "https://cardioguide-emergency-ecg-assessment-knowledge-ba.ai.studio/" },
+      { label: "Acute Chest pain :evaluation", href: "https://acute-chest-pain.vercel.app/" },
     ],
   },
   {
