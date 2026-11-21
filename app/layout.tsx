@@ -8,8 +8,7 @@ export const metadata: Metadata = {
   description: "Register patients, consult, and get AI-assisted notes on rounds.",
 };
 
-import { clinicalAppPath } from "@/lib/consultAgent";
-import { clinicalLibrary } from "@/lib/clinicalLibrary";
+import ClinicalLibrary from "@/components/ClinicalLibrary";
 import VoiceAgent from "@/components/VoiceAgent";
 
 export default function RootLayout({
@@ -44,29 +43,7 @@ export default function RootLayout({
                   <p className="eyebrow">Clinical library</p>
                   <p className="text-xs text-paper-ink/50 mt-1">Quick access to clinical tools and learning apps</p>
                 </div>
-                <div className="space-y-2">
-                  {clinicalLibrary.map((section) => (
-                    <details key={section.heading} className="group rounded-lg border border-paper-dim bg-white">
-                      <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg px-3 py-3 font-serif font-semibold text-sm text-teal-800 hover:bg-teal-50">
-                        <span>{section.heading}</span>
-                        <span className="text-paper-ink/40 transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
-                      </summary>
-                      <ul className="space-y-1 border-t border-paper-dim px-2 py-2">
-                        {section.items.map((item) => (
-                          <li key={item.label}>
-                            <Link
-                              href={clinicalAppPath(item.label)}
-                              prefetch={false}
-                              className="block rounded-md px-2.5 py-2 text-sm leading-snug text-paper-ink/75 hover:text-teal-800 hover:bg-teal-50 transition-colors"
-                            >
-                              {item.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
-                  ))}
-                </div>
+                <ClinicalLibrary />
               </div>
             </aside>
 
