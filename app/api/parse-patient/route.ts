@@ -1,7 +1,8 @@
+import { getAnthropicApiKey } from "@/lib/anthropic";
 import { NextRequest, NextResponse } from "next/server";
 import { authorizeApi } from "@/lib/apiSecurity";
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const ANTHROPIC_API_KEY = getAnthropicApiKey();
 const MODEL = process.env.ASK_AI_MODEL || "claude-sonnet-4-6";
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const SUPPORTED_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp", "application/pdf"]);
