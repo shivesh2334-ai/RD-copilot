@@ -1,3 +1,4 @@
+import { getAnthropicApiKey } from "@/lib/anthropic";
 import { NextRequest, NextResponse } from "next/server";
 import { authorizeApi } from "@/lib/apiSecurity";
 import { agentInstructions, validateReply, type AgentMessage } from "@/lib/consultAgent";
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
   if (!patient || !Number.isFinite(patient.age) || patient.age < 0 || patient.age > 130 || !["male", "female", "other"].includes(patient.sex) || typeof notes !== "string" || notes.length > 12000 || !Array.isArray(messages) || !messages.length || messages.length > 30 || messages.some((m: AgentMessage, i: number) => !m || m.role !== (i % 2 === 0 ? "user" : "assistant") || typeof m.content !== "string" || !m.content.trim() || m.content.length > 12000) || messages.length % 2 !== 1 || JSON.stringify(body).length > 60000) {
     return NextResponse.json({ error: "Invalid consultation input or dialogue too long. Start a fresh agent session." }, { status: 400 });
   }
-  const key = process.env.ANTHROPIC_API_KEY;
+  const key = getAnthropicApiKey();
   if (!key) return NextResponse.json({ error: "Configure ANTHROPIC_API_KEY to enable the consultation agent." }, { status: 503 });
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {

@@ -1,7 +1,8 @@
+import { getAnthropicApiKey } from "@/lib/anthropic";
 import { NextRequest, NextResponse } from "next/server";
 import { authorizeApi } from "@/lib/apiSecurity";
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const ANTHROPIC_API_KEY = getAnthropicApiKey();
 const MODEL = process.env.ASK_AI_MODEL || "claude-sonnet-4-6";
 
 export async function POST(req: NextRequest) {

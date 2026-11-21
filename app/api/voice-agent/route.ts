@@ -1,3 +1,4 @@
+import { getAnthropicApiKey } from "@/lib/anthropic";
 import { NextRequest, NextResponse } from "next/server";
 import { authorizeApi } from "@/lib/apiSecurity";
 import { agentModules } from "@/lib/consultAgent";
@@ -12,7 +13,7 @@ import {
 const MODEL = process.env.ASK_AI_MODEL || "claude-sonnet-4-6";
 
 async function callClaude(system: string, content: string, maxTokens: number) {
-  const key = process.env.ANTHROPIC_API_KEY;
+  const key = getAnthropicApiKey();
   if (!key) throw new Error("NOT_CONFIGURED");
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -20,7 +21,13 @@ async function callClaude(system: string, content: string, maxTokens: number) {
     headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
     body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages: [{ role: "user", content }] }),
   });
-  if (!response.ok) throw new Error("Provider failed");
+  if (!response.ok) {
+    console.warn("Voice agent: Anthropic request failed", {
+      status: response.status,
+      requestId: response.headers.get("request-id"),
+    });
+    throw new Error("Provider failed");
+  }
   const data = await response.json();
   if (data.stop_reason === "max_tokens") throw new Error("Incomplete output");
   return (data.content as { type: string; text?: string }[])
