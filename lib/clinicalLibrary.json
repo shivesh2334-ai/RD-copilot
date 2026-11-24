@@ -87,6 +87,10 @@
         "href": "https://diabetes-clinical-care.vercel.app/"
       },
       {
+        "label": "Hypertension",
+        "href": "https://hypertension-alpha.vercel.app/"
+      },
+      {
         "label": "Laboratory",
         "href": "https://blood-test-analysis-suite.vercel.app/"
       },
