@@ -211,6 +211,10 @@
       {
         "label": "CVD risk calculator",
         "href": "https://risk-calculator-indol-eight.vercel.app/"
+      },
+      {
+        "label": "Lipidology",
+        "href": "https://lipid-clinical-companion.vercel.app/"
       }
     ]
   },
