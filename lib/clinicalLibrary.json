@@ -327,5 +327,14 @@
         "href": "https://healthcare-communication.vercel.app/"
       }
     ]
+  },
+  {
+    "heading": "Calculators",
+    "items": [
+      {
+        "label": "Combined Cardiac risk calculator",
+        "href": "https://risk-calculator-1.ai.studio/#top"
+      }
+    ]
   }
 ]
